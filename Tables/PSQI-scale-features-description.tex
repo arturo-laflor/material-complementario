@@ -1,0 +1,30 @@
+\documentclass[10pt,letterpaper,oneside]{article}
+\usepackage[latin1]{inputenc}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{graphicx}
+\usepackage{multirow}
+\usepackage{multicol}
+\begin{document}
+% Please add the following required packages to your document preamble:
+% \usepackage{multirow}
+\begin{table}[ht]
+	\centering
+	\caption{PSQI Scale features description}
+	\label{tab:PSQI-Scale-features-description}
+	\begin{tabular}{|l|l|l|p{3cm}|p{5cm}|}
+		\hline
+		\multicolumn{1}{|c|}{\textbf{Group}} & \multicolumn{1}{c|}{\textbf{Feature}} & \multicolumn{1}{c|}{\textbf{Type}} & \multicolumn{1}{c|}{\textbf{Value}}   & \multicolumn{1}{c|}{\textbf{Role}}    \\ \hline
+        & SQDUR  &   &   & Results of SQ duration. A 0 value is the best for sleep quality and 3 is the worst.                                           \\ \cline{2-2} \cline{5-5} 
+		& SQDIS    &      &    & Results of SQ disturbances. A 0 value is the best for sleep quality and 3 is the worst. \\ \cline{2-2} \cline{5-5} 
+    	\multirow{9}{*}{PSQI Scale} & SQLAT  & \multirow{7}{*}{Categorical}  &  \multirow{7}{3cm}{A level variable. $ 0 < SQ*\leq 3 $.}  & Results of SQ latency. A 0 value is the best for sleep quality and 3 is the worst.    \\ \cline{2-2} \cline{5-5} 
+		& SQDD   &    &   & Results of SQ day dysfunction. A 0 value is the best for sleep quality and 3 is the worst. \\ \cline{2-2} \cline{5-5} 
+ & SQSE                                  &                                    &                                                       & Results of SQ sleep efficiency. A 0 value is the best for sleep quality and 3 is the worst.                                   \\ \cline{2-2} \cline{5-5} 
+		& SQSQ                                  &                                    &                                                       & Results of SQ sleep quality general perception of the respondent. A 0 value is the best for sleep quality and 3 is the worst. \\ \cline{2-2} \cline{5-5} 
+		& SQMS                                  &                                    &                                                       & Results of SQ, needs meds. A 0 value is the best for sleep quality and 3 is the worst.                                        \\ \cline{2-5} 
+		& SQTT                                  & Continuous                         & An integer value. $ 0 < SQTT\leq 21 $.                 & Total of PSQI                                                                                                                 \\ \cline{2-5} 
+		& SQCL                                  & Categorical                        & A level value.                                        & Good/ Poor                                                                                                       \\ \hline
+	\end{tabular}
+\end{table}
+\end{document}

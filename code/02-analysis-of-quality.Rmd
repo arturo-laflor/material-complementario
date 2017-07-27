@@ -1,0 +1,592 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+
+```{r setup}
+library(ggplot2)
+library(bitops)
+library(RCurl)
+
+
+#Funciones locales
+source(file="C:/Master/apuntes-articulo-feature-selection/code/preproceso_1.R",encoding = "UTF8")
+source(file="C:/Master/apuntes-articulo-feature-selection/code/baremo_PSQI.R",encoding = "UTF8")
+source(file="C:/Master/apuntes-articulo-feature-selection/code/baremo_SHI.R",encoding = "UTF8")
+
+
+#funciones online
+script <- getURL("https://raw.githubusercontent.com/arturo-laflor/util-R-codes/master/QOfCategoricalF.R", ssl.verifypeer = FALSE)
+eval(parse(text = script),envir=.GlobalEnv)
+
+script <- getURL("https://raw.githubusercontent.com/arturo-laflor/util-R-codes/master/QOfContinuousF.R", ssl.verifypeer = FALSE)
+eval(parse(text = script),envir=.GlobalEnv)
+
+script <- getURL("https://raw.githubusercontent.com/arturo-laflor/util-R-codes/master/multiplot.R", ssl.verifypeer = FALSE)
+eval(parse(text = script),envir=.GlobalEnv)
+
+knitr::opts_chunk$set(echo = FALSE,root.dir="C:/Master/apuntes-articulo-feature-selection/")
+
+#setwd("C:/Master/apuntes-articulo-feature-selection/")
+```
+
+
+# Estructuration and validation data process
+
+Before to generate the quality report of the data, the data are loaded and passed for a process of validation and restructuration. This process includes the renaming of the columns and data validation for columns as time and age. Additionally, the values for the responses of SHI and PSQI questionnaires was recodified from original responses ('Nunca','Casi nunca','Algunas veces','Frecuentemente','Siempre') to data that can be used to numerical and algorithmical analysis ('0','1','2','3','4').
+
+```{r lee_dataset__con_scripts_originales, echo=FALSE}
+user<-Sys.info()[7]
+user<-user[[1]]
+ruta<-paste("C:/Users/",user,"/Google Drive/Doctorado/Tesis/Data/",sep = "") 
+  d_resp_Bad_script<-read.csv(file=paste(ruta,"responses_after_preproc_1.1.csv",sep = ""),header = T,sep = ",")
+
+d_resp_Bad_script<-d_resp_Bad_script[-1]
+  
+#write.csv(file=paste(ruta,"responses_after_preproc_1.1.csv",sep = ""),QS_data)
+
+
+```
+
+The resulting dataset has `r dim(QS_data)[2]` columns, distributet as the following table shows:
+
+| Type        | Quantity | Columns in the dataset |
+|-------------|----------|------------------------|
+| CharID      | 1        | 1                      |
+| Categorical | 41       | [3-9] and [14-48]      |
+| Continuous  | 6        | 2 and [10-13]          |
+
+
+Exploring the data, allow to identify three records that contains no data for any feature in the dataset, this three records was deleted from the dataset to avoid noisy in following analysis.
+
+
+# Data quality report
+
+A report of data quality was performed at this time, showing the main metrics for the continuous and categorical variables respectively. For categorical variables, nine metrics were analyzed: quantity, missing values, cardinality, mode, mode frequency, mode percent, second mode, second mode frequency and second mode percent, while for continuous variables ten metrics were analyzed: quantity, missing values, cardinality, minimum value, first quartile, median, third quartile, maximum value, mean, and standard deviation. 
+
+## Continuous features
+The dataset contains five continuous features, one for demographic data (DD1=AGE) and four features that measure the sleep duration (SQ1="Time to go to bed", SQ2="Latency of sleep", SQ3="Time to wake up", SQ4="Period of time between going to bed and waking up").
+
+
+```{r report-of-quality-contfeat-bad-script}
+dfCONTFEAT<-cbind.data.frame(DD1=d_resp_Bad_script[,2],d_resp_Bad_script[,10:13])
+DRCONT<-QOfContinuousF(dfCONTFEAT)
+DRCONT
+
+```
+Table:Report of qulaity of the continuos features
+
+### Generalities
+The table \@ref(Report of quality of the continuos features) shows some irregularities in continuous variables, as we can see, a negative value is the minimum value in the SQ4 variable; this variable represents the *Period of time between going to bed and waking up*, thus no negative value must be enter in this field, likewise, it appear a $0.0$ value as the minimun value in the SQ1 variable, which is wrong because this is the time that respondents said go to bed, and, in this case, $0.00$ is not a valid answer, in any case, an appropriate answer would be $12.00$, referring to midnight. On the other hand, the variable SQ2, has a large standard deviation ($\sigma=11.91$), since the variable represents the minutes that person takes to fall asleep in minutes ($\mu\simeq 15$). 
+
+### Missing values
+No one of these features have a great quantity of missing values, DD1 is the variable with most of them, however the missing values represents only the $`r round(max(DRCONT[,2])/dim(QS_data)[1],digits=3)` \%$ of the data, whis is not significant. If we assume that each record that contains a missing value is a different row, we have $`r sum(DRCONT[,2])`$ records, which represents the 
+$`r round(sum(DRCONT[,2])/dim(QS_data)[1],digits=3)`\%$. As this percentage is small, and there are not in our hands, previous works describing the tendency of the data, these records with missing values could be deleted. 
+
+### Cardinality
+These continuos variables shows good cardinality, even though the ratio between the cardinality and number of records is not close to one. The nature of the data justifies this fact, because although the features are continuous and in theory they could take a large number of values, they take a small range of values, for instance, the variable SQ1 take an small range of values because the people answer commonly to this kind of question with onclock time, it means, people ask that they go to bed at $9:00$, $10:30$, $10:45$ or $11:00$, even when they, actually were to bed at $9:03$, or $10:33$ referring to the first to examples. The other variables have similar nature, thus the conclusion that cardinality is good for this variables, where the smallest cardinality was 15.
+
+
+### Histograms and boxplot
+
+Histograms and boxplot were generated to observe the behaviour of the data. 
+```{r histograms-bocplots}
+library(ggplot2)
+
+histDD1<-ggplot(data=d_resp_Bad_script,aes(DD1))+geom_histogram(bins = 30)+labs(y="Count")
+histSQ1<-ggplot(data=d_resp_Bad_script,aes(SQ1))+geom_histogram(bins = 30)+labs(y="Count")
+histSQ2<-ggplot(data=d_resp_Bad_script,aes(SQ2))+geom_histogram(bins = 30)+labs(y="Count")
+histSQ3<-ggplot(data=d_resp_Bad_script,aes(SQ3))+geom_histogram(bins = 30)+labs(y="Count")
+histSQ4<-ggplot(data=d_resp_Bad_script,aes(SQ4))+geom_histogram(bins = 30)+labs(y="Count")
+
+boxplotDD1<-ggplot(data=d_resp_Bad_script, aes(as.factor(DD2),DD1))+geom_boxplot()+labs(x="Gender")
+boxplotSQ1<-ggplot(data=d_resp_Bad_script, aes(as.factor(DD2),SQ1))+geom_boxplot()+labs(x="Gender")
+boxplotSQ2<-ggplot(data=d_resp_Bad_script, aes(as.factor(DD2),SQ2))+geom_boxplot()+labs(x="Gender")
+boxplotSQ3<-ggplot(data=d_resp_Bad_script, aes(as.factor(DD2),SQ3))+geom_boxplot()+labs(x="Gender")
+boxplotSQ4<-ggplot(data=d_resp_Bad_script, aes(as.factor(DD2),SQ4))+geom_boxplot()+labs(x="Gender")
+
+
+multiplot(histDD1,histSQ1,histSQ2,histSQ3,histSQ4,boxplotDD1,boxplotSQ1,boxplotSQ2,boxplotSQ3,boxplotSQ4,cols=2)
+```
+
+These plots show that the continuous features have outliers which should be analyzed to include/exclude from de dataset before of the training of the model to obtain better results. These variables do not intervene directly in the generation of the model, the model is generated from the SH features, however, these outliers could be indicators of some disorder of sleep in the respondent, thus the analysis must b performed.
+
+
+The Table \@ref(tab-data-quality-plan-continuous) summarizes the data quality issues in continuous features and the potential strategies to attend them.
+
+
+| Feature | Data quality issue                                                                        | Strategie                                                                                                                                                                                                               |
+|---------|-------------------------------------------------------------------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| SQ1     | Data contain 0.0, the correct value should be 12.00                                       | Refine the process of convert data for this field                                                                                                                                                                       |
+| SQ4     | Data contain negative values, it is wrong because the data represents the time to wake up | Refine the process validating the data, to correct the problem, or, eliminate the records with this issue.                                                                                                              |
+| SQ2     | Standar deviation too large                                                               | Finding outliers visually and analytically. Excluding outliers from the modeling may improve the predictions. These analysis of outliers includes all continuous variables.                                             |
+| All     | Missing values                                                                            | The percentage of missing values is low, it allows to eliminate records with missing values. The decision of impute data is a few probable, since no reports are in our bibliography to know the tendency of the data.  |
+
+Table:Data quality plan for continuous features
+
+<!-- \begin{table}[ht] -->
+<!-- \centering -->
+<!-- \caption{Data quality plan for continuous features} -->
+<!-- \label{tab-data-quality-plan-continuous} -->
+<!-- \begin{tabular}{|l|l|l|} -->
+<!-- \hline -->
+<!-- Feature & Data quality issue                                                                        & Strategie                                                                                                                                                                                                              \\ \hline -->
+<!-- SQ1     & Data contain 0.0, the correct value should be 12.00                                       & Refine the process of convert data for this field                                                                                                                                                                      \\ \hline -->
+<!-- SQ4     & Data contain negative values, it is wrong because the data represents the time to wake up & Refine the process validating the data, to correct the problem, or, eliminate the records with this issue.                                                                                                             \\ \hline -->
+<!-- SQ2     & Standar deviation too large                                                               & Finding outliers visually and analytically. Excluding outliers from the modeling may improve the predictions. These analysis of outliers includes all continuous variables.                                            \\ \hline -->
+<!-- All     & Missing values                                                                            & The percentage of missing values is low, it allows to eliminate records with missing values. The decision of impute data is a few probable, since no reports are in our bibliography to know the tendency of the data. \\ \hline -->
+<!-- \end{tabular} -->
+<!-- \end{table} -->
+
+## Categorical Features
+The categorical features were divided in two groups, the demographic features are in the first group and the features containing all the information over the sleep hygiene are in other group.
+
+### Demographics
+```{r report-of-quality-catdemofeat-bad-script}
+DRCATDEMO<-QOfCategoricalF(cbind.data.frame(d_resp_Bad_script[,3:9]))
+
+DRCATDEMO
+
+```
+Table: Report-of-quality-of-the-categorical-demographic-features
+
+
+The table \@ref(Report-of-quality-of-the-categorical-demographic-features) shows only one irregularity in this set of variables, the variable DD6 has the hihest mode posible ($100\%$), if data are right, all respondents are living in free union status  which is very doubtful taken in account the population were the questionnaire was applied. There are less missing values than in the continuous features, so, it is possible to think in eliminate the records. The cardinality is not a problem in this set of features (except for the variable DD6 as commented above), since all posibilities have representation. In the two cases (features DD7 and DD8) where the mode capture a high percentage of the data, the information is good for this research. DD7 refers to people who suffer some chronic disease, the best answer to this work is "Any" because the intention is to work with healthy people, likewise in the DD8 variable that ask to the people if they are in some crisis that disrups their sleep, the best answer to this work is "No", fortunatelly, this is the mode.
+
+
+| Feature | Data quality issue                         | Strategie                                                                                                                                     |
+|---------|--------------------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------|
+| DD6     | The mode represents the 100% of the data.  | Observation of the raw data and analysis of the process of the data restructuring to identify a possible bug.                                 |
+| All     | Missing values                             | The percentage of missing values is very small, it allows to eliminate records with missing values. No imputation is pertinent for this data. |
+
+Table:Data quality plan for categorical demographic features
+
+<!-- \begin{table}[ht] -->
+<!-- \centering -->
+<!-- \caption{Data quality plan for categorical demographic features} -->
+<!-- \label{tab-data-quality-plan-categorical-demographic} -->
+<!-- \begin{tabular}{lll} -->
+<!-- \hline -->
+<!-- \multicolumn{1}{|l|}{Feature} & \multicolumn{1}{l|}{Data quality issue}                         & \multicolumn{1}{l|}{Strategie}                                                                                                                \\ \hline -->
+<!-- \multicolumn{1}{|l|}{DD6}     & \multicolumn{1}{l|}{The mode represents the 100\% of the data.} & \multicolumn{1}{l|}{Observation of the raw data and analysis of the process of the data restructuring to identify a possible bug.}            \\ \hline -->
+<!-- All                           & Missing values                                                  & The percentage of missing values is very small, it allows to eliminate records with missing values. No imputation is pertinent for this data. -->
+<!-- \end{tabular} -->
+<!-- \end{table} -->
+
+### Slepp hygiene
+
+```{r report-of-quality-catshfeat}
+DRCATSH<-QOfCategoricalF(cbind.data.frame(d_resp_Bad_script[,28:48]))
+
+write.csv(DRCATSH,file = paste(ruta,"quality-reposrt-raw-SH.csv",sep = ""))
+
+```
+Table: Report of quality of the sleep hygiene features
+
+
+In Table \@ref(Report-of-quality-of-the-sleep-hygiene-features), the cardinality shows that all possible value $[0-5]$ for each answer is represented in the data, except by the SH9 variable where one of the options was not selected as answer of the respondents. It is good for the quality of data, however, there are two variables with high mode. The 81.66 % of the respondents, answered *never ($0$)*  to the question SH9 *"I use alcohol within 4 hours of going to bed or after going to bed."*, while the 94.38% answered *never ($0$)*  to the question SH8 *"I use tobacco within 4 hours of going to bed or after going to bed."*, which means that there are few variability in the data in these two variables. It is possible to dispense with these data for the analysis, since they do not contribute much information to the studied phenomenon for this population. The other 19 categorical variables for SHI, have a cardinality of 5, and the higher mode is placed in SH10  *"I use cafeine within 4 hours of going to bed or after going to bed."* were a $66.98\%$ of the respondents answered *never ($0$)* for this question. This means that the answers have a good range of variability to be analized, and to participate as candidate of be selected as feature to training the model.
+
+This set of data has small number of missing values, however, in this case it is possible to impute data due to the features together represents a behavior of the person. The KNN algorithm performs data imputation using similarity, thus, in this case a good approximation to the true data could be computed taken as reference the 20 remaining features of the neighbors to determine the missing value.
+
+
+| Feature | Data quality issue                         | Strategie                                                                                                                                     |
+|---------|--------------------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------|
+| SH8     | The mode is very high (>94%)                        | Analyze the relevance of include this variable to the analysis due the few variability                                                                                                                                                                                                 |
+| SH9     | The mode is high (>81%)                             | Analyze the relevance of include this variable to the analysis due the few variability                                                                                                                                                                                                 |
+| All     | Missing values                             | The percentage of missing values is small, however imputation will be performed for those records with missing values after the deletion of records with missing values in the others set of data (continuous and demographic categorical features) |
+
+Table: Potential-strategies-to-attend-SH-features
+
+
+<!-- \begin{table}[ht] -->
+<!-- \centering -->
+<!-- \caption{Potential strategies to attend SH features} -->
+<!-- \label{Table: Potential-strategies-to-attend-SH-features} -->
+<!-- \begin{tabular}{|l|l|l|} -->
+<!-- \hline -->
+<!-- Feature & Data quality issue                       & Strategie                                                                                                                                                                                                                                           \\ \hline -->
+<!-- SH8     & The mode is very high (\textgreater94\%) & Analyze the relevance of include this variable to the analysis due the few variability                                                                                                                                                              \\ \hline -->
+<!-- SH9     & The mode is high (\textgreater81\%)      & Analyze the relevance of include this variable to the analysis due the few variability                                                                                                                                                              \\ \hline -->
+<!-- All     & Missing values                           & The percentage of missing values is small, however imputation will be performed for those records with missing values after the deletion of records with missing values in the others set of data (continuous and demographic-categorical features) \\ \hline -->
+<!-- \end{tabular} -->
+<!-- \end{table} -->
+
+
+
+# Following the quality plan to attend issues
+
+The first step in order to attend the issues was the analysis of the code that validates the raw data, to avoid the suspicious of bugs that could be generate wrong data. After the code is validated, the errors in data can be adjudicate to human capture.
+
+After the analysis of scripts, tree bugs were fixed. The first bug is related with the reason that the civil status have a mode equivalent to the number of records in the dataset. The bug was generated by omittining a condition in the evaluation of a missing value in the field in the same line of code that attempt to standardize the results so that all the sentences were in the same style of case. In the case of status civil feature, some answers are wroten as *'Unión libre'*, while other was wroten as *'Unión Libre'*. 
+
+The line with the bug: 
+
+`ifelse(is.na(dataSet$DD6),dataSet$DD6<-NA,dataSet$DD6<-"Unión Libre")`
+
+The line after being fixed
+`ifelse(is.na(dataSet$DD6),dataSet$DD6<-NA,dataSet[dataSet$DD6=='Unión libre',7]<-"Unión Libre")`
+
+
+The second bug was identified in the script that calculates the time of sleep depending of the three variables, *'Time to go the bed'*, *'Time to wake up'*, *'Time to fall asleep'*, in this case, the condition for the calculation does not contemplate that a person could say that he went to bed and got up twelve hours apart. The problem was solved by modifying the conditional operator of $>$ to $\geq$.
+
+Code with bug:
+```
+  if(HD>HL){
+    HD<-HD-12.00
+  }
+  SE<-abs(HL-HD)
+  SE<-SE-round(minutos/60,digits = 2)
+```
+
+Code after being fixed:
+```
+  if(HD>=HL){
+    HD<-HD-12.00
+  }
+  SE<-abs(HL-HD)
+  SE<-SE-round(minutos/60,digits = 2)
+```
+
+The third bug was corrected by adding two condition per values before ignored. Values in the range of $(-\infty,0)$ must be taken a NA value, and values in the range of $[0,1)$ must be transformed by adding 12.00.
+
+The lines that were added are:
+
+```
+  if(!is.na(s3)){
+    if(as.numeric(s3)<0){
+      s3<-NA
+    }else if(as.numeric(s3)<1){
+      s3=as.numeric(s3)+12
+    }else{
+      s3<-as.numeric(s3)
+    }
+  }
+```
+
+
+```{r}
+user<-Sys.info()[7]
+user<-user[[1]]
+ruta<-paste("C:/Users/",user,"/Google Drive/Doctorado/Tesis/Data/",sep = "") 
+  d_crudos<-read.csv(file=paste(ruta,"responses.csv",sep = ""),header = T,sep = ",")
+
+QS_data<-preproceso_1(d_crudos,2)
+```
+
+The quality reports generated after apply this corrections, show a difference in the identified features with possible issues due to a wrong treatment.
+
+```{r data-quality-report-contfeat}
+dfCONTFEAT<-cbind.data.frame(DD1=QS_data[,2],QS_data[,10:13])
+DRCONT<-QOfContinuousF(dfCONTFEAT)
+DRCONT
+
+```
+
+```{r data-quality-report-catdemofeat}
+DRCATDEMO<-QOfCategoricalF(cbind.data.frame(QS_data[,3:9]))
+DRCATDEMO
+```
+
+The minimum value in SQ1 is not zero as before, now it is one, which is reasonable; the variable SQ4 do not have a negative value as minimum value. The present also is very small ($0.12$) and was verified in the raw data, the conclusion is that it was a wrong user capture, the respondent said that he/she go to bed at 12:30 and wakes up at 12:42 every day. On the other hand, the civil status (DD6) has a congruent value for the sample of study, the $53.55\%$ of the respondents said be married and $35.21\%$ be single, in contrast with previous data where it was reported that $100\%$ of the people had a 'Free union' civil status.  
+
+
+The second step was to work with the missing values in the continuous features and missing values in the categorical demographic features. Records containing missing values were eliminated as proposed in the data qulaity plan described in Table \@ref(tab-data-quality-plan) and \@ref(tab-data-quality-plan-categorical-demographic) respectively.
+
+
+```{r recordwithNA-continuous}
+#identifica el índice del registro donde existe un valor faltante
+recNA<-c(which(is.na(QS_data$DD1)),which(is.na(QS_data$SQ1)),which(is.na(QS_data$SQ2)), which(is.na(QS_data$SQ3)),which(is.na(QS_data$SQ4)))
+#elimina los índices repetidos
+recNA<-unique(recNA)
+#elimina los registros donde hay faltantes
+QS_data<-QS_data[-recNA,]
+#reestructura los índices del dataset
+rownames(QS_data)<-1:nrow(QS_data)
+
+#duplicated(recNA) #función que encuentra los duplicados en un vector
+```
+
+```{r recordwithNA-categorical-demographics}
+#identifica el índice del registro donde existe un valor faltante
+
+#recNA<-c(which(is.na(QS_data$DD2)),which(is.na(QS_data$DD3)),which(is.na(QS_data$DD4)), which(is.na(QS_data$DD5)),which(is.na(QS_data$DD6)))
+
+#esta línea de código identifica valores faltantes en las columnas de la 3 a la 9, como la
+#funcion which regresa los indices de la celda donde se encuetra el faltante tomando cada celda con un valor consecutivo, del resultado debe extraerse el residuo de la división entre el número de celda y la cantidad de registros en el dataset. "Esta es la forma de llegar al registro correcto donde está
+#el valor faltante"
+
+recNA<-c(which(is.na(QS_data[,3:9])))%%dim(QS_data)[1]
+
+#elimina los índices repetidos
+recNA<-unique(recNA)
+#elimina los registros donde hay faltantes
+QS_data<-QS_data[-recNA,]
+#reestructura los índices del dataset
+rownames(QS_data)<-1:nrow(QS_data)
+
+#duplicated(recNA) #función que encuentra los duplicados en un vector
+```
+
+
+After applying the process to delete records with missing values in continuous and categorical demographics features the dataset reducts its dimentionality from `r dim(d_crudos)[1]` to `r dim(QS_data)[1]`, which represents a reduction of `r round((dim(d_crudos)[1] - dim(QS_data)[1])/dim(d_crudos)[1],digits=3)`% of the original data.
+
+
+
+In the third step of this stage the atypical values are identified to exclude them from the dataset that will serve as a source of the training of the model. The process excludes records that exceed three standard deviations in the variable SQ4 ('time the person spent asleep'). This variable is of high impact on the quality of sleep and is not considered within the factors of sleep hygiene. Another indicator of a possible sleep disorder is the latency, latency is the time between a person go to bed and he/she fall asleep. The records where this feature has outliers, also were deleted. 
+
+
+```{r scoring-outliers}
+library(outliers)
+library(magrittr)
+ic<-0.99
+
+outSQ4<-scores(QS_data$SQ4,type = "z",prob = ic)%>%which(.)
+outSQ4<-unique(outSQ4)
+#elimina los registros donde hay valores atípicos
+QS_data<-QS_data[-outSQ4,]
+#reestructura los índices del dataset
+rownames(QS_data)<-1:nrow(QS_data)
+
+outSQ2<-scores(QS_data$SQ2,type = "z",prob = ic)%>%which(.)
+outSQ2<-unique(outSQ2)
+#elimina los registros donde hay valores atípicos
+QS_data<-QS_data[-outSQ2,]
+#reestructura los índices del dataset
+rownames(QS_data)<-1:nrow(QS_data)
+
+
+
+```
+
+After delete records with outliers n continuous variables the dataset reducts its dimentionality from `r dim(d_crudos)[1]` to `r dim(QS_data)[1]`, which represents a reduction of `r round((dim(d_crudos)[1] - dim(QS_data)[1])/dim(d_crudos)[1],digits=3)`% of the original data.
+
+The following figure, shows the histograms and boxplots after eliminated records with outliers in SQ2 and SQ4, boxplots in these two variables make it clear that do not outliers were found for these features. DD1 has no outliers too even though maintaining the original records.
+
+```{r histograms-boxplots}
+library(ggplot2)
+
+histDD1<-ggplot(data=QS_data,aes(DD1))+geom_histogram(bins = 30)+labs(y="Count")
+histSQ1<-ggplot(data=QS_data,aes(SQ1))+geom_histogram(bins = 30)+labs(y="Count")
+histSQ2<-ggplot(data=QS_data,aes(SQ2))+geom_histogram(bins = 30)+labs(y="Count")
+histSQ3<-ggplot(data=QS_data,aes(SQ3))+geom_histogram(bins = 30)+labs(y="Count")
+histSQ4<-ggplot(data=QS_data,aes(SQ4))+geom_histogram(bins = 30)+labs(y="Count")
+
+boxplotDD1<-ggplot(data=QS_data, aes(as.factor(DD2),DD1))+geom_boxplot()+labs(x="Gender")
+boxplotSQ1<-ggplot(data=QS_data, aes(as.factor(DD2),SQ1))+geom_boxplot()+labs(x="Gender")
+boxplotSQ2<-ggplot(data=QS_data, aes(as.factor(DD2),SQ2))+geom_boxplot()+labs(x="Gender")
+boxplotSQ3<-ggplot(data=QS_data, aes(as.factor(DD2),SQ3))+geom_boxplot()+labs(x="Gender")
+boxplotSQ4<-ggplot(data=QS_data, aes(as.factor(DD2),SQ4))+geom_boxplot()+labs(x="Gender")
+
+
+multiplot(histDD1,histSQ1,histSQ2,histSQ3,histSQ4,boxplotDD1,boxplotSQ1,boxplotSQ2,boxplotSQ3,boxplotSQ4,cols=2)
+```
+
+```{r}
+
+recNA<-c(which(is.na(QS_data[,14:48])))%%dim(QS_data)[1]
+
+```
+
+
+The following tables show the report of quality in the dataset after apply deletion of missing values, exclusion of records containing outliers and imputation of missing values in variables that are closely related with the training of the model.
+
+
+```{r}
+QSREADY<-read.csv(file=paste(ruta,"responses_clean_and_imputed.csv",sep = ""),header = T,sep = ",")
+QSREADY<-QSREADY[-1]
+
+QofDSH<-QOfCategoricalF(QSREADY[,28:48])
+
+write.csv(QofDSH,file = paste(ruta,"qofdsh.csv",sep = ""))
+```
+
+| Feature | Count | Miss | Card | Mode | ModeFrec | ModePerc | Mode2 | Mode2Frec | Mode2Perc |
+|---------|-------|------|------|------|----------|----------|-------|-----------|-----------|
+| SH1     | 306   | 0    | 5    | 1    | 109      | 35.62%   | 0     | 97        | 31.70%    |
+| SH2     | 306   | 0    | 5    | 1    | 109      | 35.62%   | 2     | 107       | 34.97%    |
+| SH3     | 306   | 0    | 5    | 1    | 147      | 48.04%   | 2     | 70        | 22.88%    |
+| SH4     | 306   | 0    | 5    | 0    | 186      | 60.78%   | 1     | 63        | 20.59%    |
+| SH5     | 306   | 0    | 5    | 0    | 159      | 51.96%   | 2     | 56        | 18.30%    |
+| SH6     | 306   | 0    | 5    | 0    | 135      | 44.12%   | 1     | 69        | 22.55%    |
+| SH7     | 306   | 0    | 5    | 0    | 128      | 41.83%   | 1     | 99        | 32.35%    |
+| SH8     | 306   | 0    | 5    | 0    | 292      | 95.42%   | 3     | 5         | 1.63%     |
+| SH9     | 306   | 0    | 4    | 0    | 254      | 83.01%   | 1     | 30        | 9.80%     |
+| SH10    | 306   | 0    | 5    | 0    | 201      | 65.69%   | 1     | 53        | 17.32%    |
+| SH11    | 306   | 0    | 5    | 0    | 95       | 31.05%   | 2     | 69        | 22.55%    |
+| SH12    | 306   | 0    | 5    | 1    | 122      | 39.87%   | 2     | 99        | 32.35%    |
+| SH13    | 306   | 0    | 5    | 2    | 85       | 27.78%   | 1     | 69        | 22.55%    |
+| SH14    | 306   | 0    | 5    | 0    | 188      | 61.44%   | 1     | 54        | 17.65%    |
+| SH15    | 306   | 0    | 5    | 0    | 94       | 30.72%   | 1     | 80        | 26.14%    |
+| SH16    | 306   | 0    | 5    | 0    | 150      | 49.02%   | 1     | 76        | 24.84%    |
+| SH17    | 306   | 0    | 5    | 0    | 200      | 65.36%   | 1     | 78        | 25.49%    |
+| SH18    | 306   | 0    | 5    | 0    | 158      | 51.63%   | 1     | 73        | 23.86%    |
+| SH19    | 306   | 0    | 5    | 0    | 112      | 36.60%   | 1     | 78        | 25.49%    |
+| SH20    | 306   | 0    | 5    | 2    | 107      | 34.97%   | 1     | 85        | 27.78%    |
+| SH21    | 306   | 0    | 5    | 1    | 122      | 39.87%   | 2     | 88        | 28.76%    |
+
+<!-- \begin{table}[ht] -->
+<!-- \centering -->
+<!-- \caption{Report of Quality of SH features after cleaning and imputation} -->
+<!-- \label{tab-report-of-quality-of-sh-features} -->
+<!-- \begin{tabular}{|l|l|l|l|l|l|l|l|l|l|} -->
+<!-- \hline -->
+<!-- Feature & Count & Miss & Card & Mode & ModeFrec & ModePerc & Mode2 & Mode2Frec & Mode2Perc \\ \hline -->
+<!-- SH1     & 306   & 0    & 5    & 1    & 109      & 35.62\%  & 0     & 97        & 31.70\%   \\ \hline -->
+<!-- SH2     & 306   & 0    & 5    & 1    & 109      & 35.62\%  & 2     & 107       & 34.97\%   \\ \hline -->
+<!-- SH3     & 306   & 0    & 5    & 1    & 147      & 48.04\%  & 2     & 70        & 22.88\%   \\ \hline -->
+<!-- SH4     & 306   & 0    & 5    & 0    & 186      & 60.78\%  & 1     & 63        & 20.59\%   \\ \hline -->
+<!-- SH5     & 306   & 0    & 5    & 0    & 159      & 51.96\%  & 2     & 56        & 18.30\%   \\ \hline -->
+<!-- SH6     & 306   & 0    & 5    & 0    & 135      & 44.12\%  & 1     & 69        & 22.55\%   \\ \hline -->
+<!-- SH7     & 306   & 0    & 5    & 0    & 128      & 41.83\%  & 1     & 99        & 32.35\%   \\ \hline -->
+<!-- SH8     & 306   & 0    & 5    & 0    & 292      & 95.42\%  & 3     & 5         & 1.63\%    \\ \hline -->
+<!-- SH9     & 306   & 0    & 4    & 0    & 254      & 83.01\%  & 1     & 30        & 9.80\%    \\ \hline -->
+<!-- SH10    & 306   & 0    & 5    & 0    & 201      & 65.69\%  & 1     & 53        & 17.32\%   \\ \hline -->
+<!-- SH11    & 306   & 0    & 5    & 0    & 95       & 31.05\%  & 2     & 69        & 22.55\%   \\ \hline -->
+<!-- SH12    & 306   & 0    & 5    & 1    & 122      & 39.87\%  & 2     & 99        & 32.35\%   \\ \hline -->
+<!-- SH13    & 306   & 0    & 5    & 2    & 85       & 27.78\%  & 1     & 69        & 22.55\%   \\ \hline -->
+<!-- SH14    & 306   & 0    & 5    & 0    & 188      & 61.44\%  & 1     & 54        & 17.65\%   \\ \hline -->
+<!-- SH15    & 306   & 0    & 5    & 0    & 94       & 30.72\%  & 1     & 80        & 26.14\%   \\ \hline -->
+<!-- SH16    & 306   & 0    & 5    & 0    & 150      & 49.02\%  & 1     & 76        & 24.84\%   \\ \hline -->
+<!-- SH17    & 306   & 0    & 5    & 0    & 200      & 65.36\%  & 1     & 78        & 25.49\%   \\ \hline -->
+<!-- SH18    & 306   & 0    & 5    & 0    & 158      & 51.63\%  & 1     & 73        & 23.86\%   \\ \hline -->
+<!-- SH19    & 306   & 0    & 5    & 0    & 112      & 36.60\%  & 1     & 78        & 25.49\%   \\ \hline -->
+<!-- SH20    & 306   & 0    & 5    & 2    & 107      & 34.97\%  & 1     & 85        & 27.78\%   \\ \hline -->
+<!-- SH21    & 306   & 0    & 5    & 1    & 122      & 39.87\%  & 2     & 88        & 28.76\%   \\ \hline -->
+<!-- \end{tabular} -->
+<!-- \end{table} -->
+
+With exception of high percentages in mode of the SH8 and SH9, all other features present a good behavior in the dataset. The issue of SH8 and SH9 will be attended in a future stage of the work, the process of feature selection will take care of this.
+
+
+The last process to be carried out in this stage is the calculation of SHI and PSQI scores through the scales provided by the respective questionnaires.
+
+```{r}
+QSSHICOMPLETE<-baremo_PSQI(QSREADY,2)
+QSSHICOMPLETE<-baremo_SHI(QSSHICOMPLETE)
+
+write.csv(QSSHICOMPLETE,file = paste(ruta,"QSSHICOMPLETE.csv",sep = ""))
+
+str(QSSHICOMPLETE)
+
+```
+
+The final dataset to be used in the process of feature selection is a `r dim(QSSHICOMPLETE)[1]` x `r dim(QSSHICOMPLETE)[2]` dataset containing 10 continuous features, 51 categorical features and one ID feature. The following table shows an outline of the dataset.
+
+
+| Grupo       | Feature | Type        | Values                                                                                   | Role                                                                                                                          |
+|-------------|---------|-------------|------------------------------------------------------------------------------------------|-------------------------------------------------------------------------------------------------------------------------------|
+| ID          | EMAIL   | Text        | inf                                                                                      | identificator                                                                                                                 |
+| DEMOGRAPHIC | DD1     | Continuous  | An integer number. 17 ≤ DD1 ≤ 100                                                        | Demographic data for statistical purposes only                                                                                |
+|             | DD2     | Categorical | Female, Male                                                                             |                                                                                                                               |
+|             | DD3     |             | Student, Employer, Teacher, Independent professional, Other                              |                                                                                                                               |
+|             | DD4     |             | Intellectual, Physical, More intellectual than physical, More physical than intellectual |                                                                                                                               |
+|             | DD5     |             | SDA, Catholic, Jehovah’s withess, Evangelic, Other                                       |                                                                                                                               |
+|             | DD6     |             | Married, Single, Divorced, Free Union, Other                                             |                                                                                                                               |
+|             | DD7     |             | No, Hypertension, Diabetes, Depression, Other                                            | Demographic information with filtering purposes                                                                               |
+|             | DD8     |             | No, Financial, Divorce process,                                                          |                                                                                                                               |
+|             |         |             | Loss of Family, Other                                                                    |                                                                                                                               |
+| PSQI        | SQ1     | Continuous  | A real numer. 0 ≤ SQ1 ≤ 12                                                               | Provide information to PSQI Scale. A 0 value is the best for sleep quality and 3 is the worst                                 |
+|             | SQ2     |             | An integer number. 0 ≤ SQ2 ≤ 60                                                          |                                                                                                                               |
+|             | SQ3     |             | A real number. 0 ≤ SQ3 ≤ 12                                                              |                                                                                                                               |
+|             | SQ4     |             | A real number. 0 ≤ SQ4 ≤ 12                                                              |                                                                                                                               |
+|             | SQ5a    | Categorical |                                                                                          |                                                                                                                               |
+|             | SQ5b    |             |                                                                                          |                                                                                                                               |
+|             | SQ5c    |             |                                                                                          |                                                                                                                               |
+|             | SQ5d    |             |                                                                                          |                                                                                                                               |
+|             | SQ5e    |             |                                                                                          |                                                                                                                               |
+|             | SQ5f    |             |                                                                                          |                                                                                                                               |
+|             | SQ5g    |             | A level variable. 0 ≤ SQ∗ ≤ 3.                                                           |                                                                                                                               |
+|             | SQ5h    |             |                                                                                          |                                                                                                                               |
+|             | SQ5i    |             |                                                                                          |                                                                                                                               |
+|             | SQ5j    |             |                                                                                          |                                                                                                                               |
+|             | SQ6     |             |                                                                                          |                                                                                                                               |
+|             | SQ7     |             |                                                                                          |                                                                                                                               |
+|             | SQ8     |             |                                                                                          |                                                                                                                               |
+|             | SQ9     |             |                                                                                          |                                                                                                                               |
+| PSQI SCALE  | SQDUR   | Categorical | A level variable. 0 < SQ∗ ≤ 3.                                                           | Results of SQ duration. A 0 value is the best for sleep quality and 3 is the worst.                                           |
+|             | SQDIS   |             |                                                                                          | Results of SQ disturbances. A 0 value is the best for sleep quality and 3 is the worst.                                       |
+|             | SQLAT   |             |                                                                                          | Results of SQ latency. A 0 value is the best for sleep quality and 3 is the worst.                                            |
+|             | SQDD    |             |                                                                                          | Results of SQ day dysfunction. A 0 value is the best for sleep quality and 3 is the worst.                                    |
+|             | SQSE    |             |                                                                                          | Results of SQ sleep efficiency. A 0 value is the best for sleep quality and 3 is the worst.                                   |
+|             | SQSQ    |             |                                                                                          | Results of SQ sleep quality general perception of the respondent. A 0 value is the best for sleep quality and 3 is the worst. |
+|             | SQMS    |             |                                                                                          | Results of SQ, needs meds. A 0 value is the best for sleep quality and 3 is the worst.                                        |
+|             | SQTT    | Continuous  | An integer value. 0 < SQTT ≤ 21.                                                         | Total of PSQI                                                                                                                 |
+|             | SQCL    | Categorical | A level value.                                                                           | Good/ Poor                                                                                                                    |
+| SHI         | SHI     | Categorical | A level variable. 0 < SH∗ ≤ 4.                                                           | Predictive Features (Provide information for SHI scale). A 0 value is the best for sleep hygiene and 4 is the worst           |
+|             | SH2     |             |                                                                                          |                                                                                                                               |
+|             | SH3     |             |                                                                                          |                                                                                                                               |
+|             | SH4     |             |                                                                                          |                                                                                                                               |
+|             | SH5     |             |                                                                                          |                                                                                                                               |
+|             | SH6     |             |                                                                                          |                                                                                                                               |
+|             | SH7     |             |                                                                                          |                                                                                                                               |
+|             | SH8     |             |                                                                                          |                                                                                                                               |
+|             | SH9     |             |                                                                                          |                                                                                                                               |
+|             | SH10    |             |                                                                                          |                                                                                                                               |
+|             | SH11    |             |                                                                                          |                                                                                                                               |
+|             | SH12    |             |                                                                                          |                                                                                                                               |
+|             | SH13    |             |                                                                                          |                                                                                                                               |
+|             | SH14    |             |                                                                                          |                                                                                                                               |
+|             | SH15    |             |                                                                                          |                                                                                                                               |
+|             | SH16    |             |                                                                                          |                                                                                                                               |
+|             | SH17    |             |                                                                                          |                                                                                                                               |
+|             | SH18    |             |                                                                                          |                                                                                                                               |
+|             | SH19    |             |                                                                                          |                                                                                                                               |
+|             | SH20    |             |                                                                                          |                                                                                                                               |
+|             | SH21    |             |                                                                                          |                                                                                                                               |
+| SHI SCALE   | SHSTR   | Continuous  | Sum of five SH features. 0 < SQ∗ ≤ 20.                                                   | Group of stress features                                                                                                      |
+|             | SHDIS   |             | Sum of five SH features. 0 < SQ∗ ≤ 20.                                                   | Group of disruptors features                                                                                                  |
+|             | SHCH    |             | Sum of six SH features. 0 < SQ∗ ≤ 24.                                                    | Group of circadian features                                                                                                   |
+|             | SHDG    |             | Sum of three SH features. 0 < SQ∗ ≤ 12.                                                  | Group of drugs features                                                                                                       |
+|             | SHTT    |             | Sum of SHSTR,SHDIS, SHCH and SHDG. 0 < SQ*≤ 76.                                          | Total of SHI                                                                                                                  |
+
+
+<!-- As first step, the ABT will be grouped as Table \@ref(tab-columns-distribution) shows the distribution of variables. ABT contains five groups of variables and each group will be divided in categorical and continuous variables to perform the analysis. At the end, eight tables of analysis of quality will be generated since there are two groups that contains only one type of variables (the SHI group have only  categorical variables, while the Scale SHI contains only continuous variables). -->
+
+<!-- ## Meaning of the groups names -->
+
+<!--   * DDCON:    Demografic data for contiuous variables -->
+<!--   * DDCAT:    Demografic data for categorical variables -->
+<!--   * PSQICON:  Continuous variables of the PSQI questionnaire -->
+<!--   * PSQICAT:  Categorical variables of the PSQI questionnaire -->
+<!--   * SHICAT:   Categorical variables of the SHI questionnaire -->
+<!--   * SPSQICON: Continuous variables of the *scale* for PSQI questionnaire -->
+<!--   * SPSQICAT: Categorical variables of the *scale* for PSQI questionnaire -->
+<!--   * SSHICON:  Continuous variables of the *scale* for SHI questionnaire -->
+<!--   * SSHICAT:  Categorical variables of the *scale* for SHI questionnaire -->
+
+
+<!-- ```{r, grouping_variables, echo=FALSE} -->
+
+<!-- DDCON<-data.frame(DD1=d_preproc[,2]) #data.frame(NM=d_preproc[,1],DD1=as.factor(d_preproc[,2])) -->
+<!-- DDCAT<-d_preproc[,3:8] -->
+<!-- PSQICON<-d_preproc[,10:13]  -->
+<!-- PSQICAT<-d_preproc[,14:27]  -->
+<!-- SHICAT<- d_preproc[,28:48]    -->
+<!-- SPSQICON<-data.frame(SQTT=d_preproc[,56]) -->
+<!-- SPSQICAT<-cbind.data.frame(d_preproc[,49:55],SQCL=d_preproc[,57]) -->
+<!-- SSHICON<- d_preproc[,58:62]    -->
+<!-- ``` -->
+
+
+<!-- ## Tables containing data for analysis of the continuous variables  -->
+
+<!-- ```{r QofCD_execution} -->
+<!-- CONTFEAT<-QOfContinuousF(cbind.data.frame(DDCON,PSQICON,SPSQICON,SSHICON)) -->
+<!-- CONTFEAT -->
+
+<!-- #Arreglar las funciones en github  -->
+<!-- #Qrt1<-apply(cbind.data.frame(DDCON,PSQICON,SPSQICON,SSHICON),2,FUN = function(x) round(quantile(as.numeric(x),.25,na.rm = T),digits = 2)) -->
+
+
+<!-- Miss<- apply(responses,2,FUN = function(x)  sum(is.na(x))) -->
+
+
+<!-- ``` -->
+
+
+<!-- ## Tables containing data for analysis of the categorical variables  -->
+
+
+
+

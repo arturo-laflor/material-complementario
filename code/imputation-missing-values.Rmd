@@ -1,0 +1,170 @@
+---
+title: "Imputation"
+output: html_notebook
+---
+
+The process of imputation begin with the analysis of missing values in the variables involved indirectly or directly in the generation of the model. The table \@ref(report-of-missing-value-in-SHSQ) shows that the dataset has few missing values (Not all columns in the table are included for lack of space, however, all columns that were omitted do not have missing values). It has $297$ complete records, a record with a missing value in the column SQ5a, one more with a missing value in the column SQ5c, an so on. The dataset contains eight records with a total of nine missing values in eight variables.
+
+```{r}
+library("mice")
+library("VIM")
+
+md.pattern(QS_data[,14:48])
+
+```
+
+|     | SQ5b | SQ5d | ... | SH20 | SH21 | SQ5a | SQ5c | SH4 | SH6 | SH11 | SH15 | SH17 | SH7 |   |
+|-----|------|------|-----|------|------|------|------|-----|-----|------|------|------|-----|---|
+| 297 | 1    | 1    | ... | 1    | 1    | 1    | 1    | 1   | 1   | 1    | 1    | 1    | 1   | 0 |
+| 1   | 1    | 1    | ... | 1    | 1    | 0    | 1    | 1   | 1   | 1    | 1    | 1    | 1   | 1 |
+| 1   | 1    | 1    | ... | 1    | 1    | 1    | 0    | 1   | 1   | 1    | 1    | 1    | 1   | 1 |
+| 1   | 1    | 1    | ... | 1    | 1    | 1    | 1    | 0   | 1   | 1    | 1    | 1    | 1   | 1 |
+| 1   | 1    | 1    | ... | 1    | 1    | 1    | 1    | 1   | 0   | 1    | 1    | 1    | 1   | 1 |
+| 2   | 1    | 1    | ... | 1    | 1    | 1    | 1    | 1   | 1   | 1    | 1    | 1    | 0   | 1 |
+| 1   | 1    | 1    | ... | 1    | 1    | 1    | 1    | 1   | 1   | 0    | 1    | 1    | 1   | 1 |
+| 1   | 1    | 1    | ... | 1    | 1    | 1    | 1    | 1   | 1   | 1    | 0    | 1    | 1   | 1 |
+| 1   | 1    | 1    | ... | 1    | 1    | 1    | 1    | 1   | 1   | 1    | 1    | 0    | 1   | 1 |
+|     | 0    | 0    | ... | 0    | 0    | 1    | 1    | 1   | 1   | 1    | 1    | 1    | 2   | 9 |
+
+<!-- \begin{table}[ht] -->
+<!-- \centering -->
+<!-- \caption{Report of missing values} -->
+<!-- \label{report-of-missing-value-in-SHSQ} -->
+<!-- \begin{tabular}{|l|l|l|l|l|l|l|l|l|l|l|l|l|l|l|} -->
+<!-- \hline -->
+<!--     & SQ5b & SQ5d & ... & SH20 & SH21 & SQ5a & SQ5c & SH4 & SH6 & SH11 & SH15 & SH17 & SH7 &   \\ \hline -->
+<!-- 297 & 1    & 1    & ... & 1    & 1    & 1    & 1    & 1   & 1   & 1    & 1    & 1    & 1   & 0 \\ \hline -->
+<!-- 1   & 1    & 1    & ... & 1    & 1    & 0    & 1    & 1   & 1   & 1    & 1    & 1    & 1   & 1 \\ \hline -->
+<!-- 1   & 1    & 1    & ... & 1    & 1    & 1    & 0    & 1   & 1   & 1    & 1    & 1    & 1   & 1 \\ \hline -->
+<!-- 1   & 1    & 1    & ... & 1    & 1    & 1    & 1    & 0   & 1   & 1    & 1    & 1    & 1   & 1 \\ \hline -->
+<!-- 1   & 1    & 1    & ... & 1    & 1    & 1    & 1    & 1   & 0   & 1    & 1    & 1    & 1   & 1 \\ \hline -->
+<!-- 2   & 1    & 1    & ... & 1    & 1    & 1    & 1    & 1   & 1   & 1    & 1    & 1    & 0   & 1 \\ \hline -->
+<!-- 1   & 1    & 1    & ... & 1    & 1    & 1    & 1    & 1   & 1   & 0    & 1    & 1    & 1   & 1 \\ \hline -->
+<!-- 1   & 1    & 1    & ... & 1    & 1    & 1    & 1    & 1   & 1   & 1    & 0    & 1    & 1   & 1 \\ \hline -->
+<!-- 1   & 1    & 1    & ... & 1    & 1    & 1    & 1    & 1   & 1   & 1    & 1    & 0    & 1   & 1 \\ \hline -->
+<!--     & 0    & 0    & ... & 0    & 0    & 1    & 1    & 1   & 1   & 1    & 1    & 1    & 2   & 9 \\ \hline -->
+<!-- \end{tabular} -->
+<!-- \end{table} -->
+
+
+A summary of the missing values its presented in the table \@ref(summary-of-missing-values-SH)
+
+| Feature | Count of missing values |
+|---------|-------------------------|
+| SQ5a    | 1                       |
+| SQ5c    | 1                       |
+| SH4     | 1                       |
+| SH6     | 1                       |
+| SH7     | 2                       |
+| SH11    | 1                       |
+| SH15    | 1                       |
+| SH17    | 1                       |
+| Total   | 9                       |
+
+
+<!-- \begin{table}[ht] -->
+<!-- \centering -->
+<!-- \caption{Summary of missing values in SH features} -->
+<!-- \label{summary-of-missing-values-SH} -->
+<!-- \begin{tabular}{|l|l|} -->
+<!-- \hline -->
+<!-- Feature & Count of missing values \\ \hline -->
+<!-- SQ5a    & 1                       \\ \hline -->
+<!-- SQ5b    & 1                       \\ \hline -->
+<!-- SH4     & 1                       \\ \hline -->
+<!-- SH6     & 1                       \\ \hline -->
+<!-- SH7     & 2                       \\ \hline -->
+<!-- SH11    & 1                       \\ \hline -->
+<!-- SH15    & 1                       \\ \hline -->
+<!-- SH17    & 1                       \\ \hline -->
+<!-- Total   & 7                       \\ \hline -->
+<!-- \end{tabular} -->
+<!-- \end{table} -->
+
+The figure \@ref(pattern-of-missing-data) shows in the left side, an histogram of the features with missing data depicting the influence of missing values in the dataset. The right side shows the pattern of missing values in the dataset, it concentrates all complete cases in the botton of the graph, which reach a 97.06% of the dataset. The remaining of the figure shows the features with missing data, placing in the right side the corresponding percentages per variable.  
+
+```{r}
+dsplotmissingvalues<-data.frame(QS_data[,14:20],QS_data[,30:44]) 
+
+plotofmv<-aggr(dsplotmissingvalues,col=c('darkgrey','black'),
+                 numbers=TRUE,labels=names(dsplotmissingvalues),
+                 cex.axis=.7,gap=3,ylab=c("Missing data","Pattern"))
+                 
+```
+
+The *mice* function was executed to impute data in the records containing missing values, the process was performed in a temporal dataset comformed only for those features with missing data. The *mice* function perform data imputation using *polytomous regression imputataion* for unordered categorical data with more of two leves, which is the case. The multinomial logistic regression was applied with 50 iterations and five datasets to obtain a table of results that allow to choose the best option to do the imputation.
+
+```{r}
+qs_dataforimp<-cbind.data.frame(SQ5a=QS_data$SQ5a,SQ5c=QS_data$SQ5c, SH4=QS_data$SH4,SH6=QS_data$SH6,SH7=QS_data$SH7,SH11=QS_data$SH11,SH15=QS_data$SH15,SH17=QS_data$SH17) 
+imputedSH<-mice(data = qs_dataforimp, m = 5, method = "pmm", maxit = 50, seed = 500)
+summary(imputedSH)
+
+imputeddata<-rbind.data.frame(imputedSH$imp$SQ5a,imputedSH$imp$SQ5c, imputedSH$imp$SH4,imputedSH$imp$SH6,imputedSH$imp$SH7,imputedSH$imp$SH11,imputedSH$imp$SH15,imputedSH$imp$SH17)
+```
+
+<!-- \begin{table}[ht] -->
+<!-- \centering -->
+<!-- \caption{Five datasets with data imputation} -->
+<!-- \label{datasets-of-impute-data} -->
+<!-- \begin{tabular}{|l|l|l|l|l|l|} -->
+<!-- \hline -->
+<!-- Number of Row & DS1 & DS2 & DS3 & DS4 & DS5 \\ \hline -->
+<!-- ROW 225       & 2   & 1   & 0   & 1   & 3   \\ \hline -->
+<!-- ROW 72        & 3   & 1   & 0   & 2   & 2   \\ \hline -->
+<!-- ROW 12        & 0   & 0   & 0   & 0   & 3   \\ \hline -->
+<!-- ROW 233       & 2   & 1   & 1   & 4   & 2   \\ \hline -->
+<!-- ROW 17        & 0   & 1   & 2   & 1   & 0   \\ \hline -->
+<!-- ROW 146       & 0   & 1   & 2   & 0   & 2   \\ \hline -->
+<!-- ROW 144       & 3   & 0   & 0   & 3   & 1   \\ \hline -->
+<!-- ROW 183       & 0   & 4   & 0   & 3   & 4   \\ \hline -->
+<!-- ROW 201       & 0   & 2   & 0   & 0   & 0   \\ \hline -->
+<!-- \end{tabular} -->
+<!-- \end{table} -->
+
+
+
+| Number of Row | DS1 | DS2 | DS3 | DS4 | DS5 |
+|---------------|-----|-----|-----|-----|-----|
+| ROW 225       | 2   | 1   | 0   | 1   | 3   |
+| ROW 72        | 3   | 1   | 0   | 2   | 2   |
+| ROW 12        | 0   | 0   | 0   | 0   | 3   |
+| ROW 233       | 2   | 1   | 1   | 4   | 2   |
+| ROW 17        | 0   | 1   | 2   | 1   | 0   |
+| ROW 146       | 0   | 1   | 2   | 0   | 2   |
+| ROW 144       | 3   | 0   | 0   | 3   | 1   |
+| ROW 183       | 0   | 4   | 0   | 3   | 4   |
+| ROW 201       | 0   | 2   | 0   | 0   | 0   |
+
+Table: datasets-of-impute-data
+
+The DS4 is the dataset most consistent with the proposals in the other datasets, it matches with at least one dataset of the remaining four, in seven of the rows. The DS4 was chosen to impute data in these variables.
+
+```{r}
+completeSH<-complete(imputedSH,4)
+md.pattern(completeSH)
+```
+<!-- \begin{table}[ht] -->
+<!-- \centering -->
+<!-- \caption{Report of missin gvalues after imputation} -->
+<!-- \label{tab-report-of-missingvalues-after-imputation} -->
+<!-- \begin{tabular}{lllllllll} -->
+<!-- SQ5a & SQ5c & SH4 & SH6 & SH11 & SH15 & SH17 & SH7 &   \\ -->
+<!-- 1    & 1    & 1   & 1   & 1    & 1    & 1    & 1   & 0 \\ -->
+<!-- 0    & 0    & 0   & 0   & 0    & 0    & 0    & 0   & 0 -->
+<!-- \end{tabular} -->
+<!-- \end{table} -->
+
+| SQ5a | SQ5c | SH4 | SH6 | SH11 | SH15 | SH17 | SH7 |   |
+|------|------|-----|-----|------|------|------|-----|---|
+| 1    | 1    | 1   | 1   | 1    | 1    | 1    | 1   | 0 |
+| 0    | 0    | 0   | 0   | 0    | 0    | 0    | 0   | 0 |
+Table:Report of missin gvalues after imputation
+
+The table \@ref(tab-report-of-missingvalues-after-imputation), shows that no missing value are in the dataset after the imputation, now the new dataset of variables with data imputation will be merged with the others features of the original dataset in a new dataset to be saved and used in advanced to train the model.
+
+```{r}
+QS_data_imputed<-cbind.data.frame(QS_data[,1:13],SQ5a=completeSH$SQ5a,SQ5b=QS_data$SQ5b,SQ5c=completeSH$SQ5c, QS_data[,17:30],SH4=completeSH$SH4,SH5=QS_data$SH5,completeSH[,4:5],QS_data[,35:37],SH11=completeSH$SH11,QS_data[,39:41],SH15=completeSH$SH15,SH16=QS_data$SH16,SH17=completeSH$SH17,QS_data[,45:48])
+write.csv(file="C:/Users/artur/Google Drive/Doctorado/Tesis/Data/responses_clean_and_imputed.csv",QS_data_imputed)
+
+```
+

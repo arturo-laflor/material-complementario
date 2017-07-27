@@ -201,7 +201,8 @@ library("mice")
   #imputa los datos con el dataset #dos en este caso elegido arbitrariamente  
   completeSH<-complete(imputedSH,2)
   
-  dpreproc1_imputed<-regeneraImputedDS(dordered,completeSH,colNA,colnames(dprepro_1))
+  #dpreproc1_imputed<-regeneraImputedDS(dordered,completeSH,colNA,colnames(dprepro_1))
+  dpreproc1_imputed<-regeneraImputedDS(dordered,completeSH,colNA)
 ```
 
 Las Tabla \@ref(tab:faltantes-imputados), muestra dos tablas con las columnas que tiene los datos faltantes y las columnas que tienen los datos imputados.

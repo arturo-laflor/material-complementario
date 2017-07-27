@@ -1,0 +1,130 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+
+# Tratamiento de datos atipicos
+
+
+1. Se genera el dataset con cuatro variables predictivas y una objetivo, en este caso SQ1 (Hora de ir a dormir) , SQ2(Tiempo en minutos que se tarda en dormir), SQ3(Tiempo que pasó dormido) y SQ4 (Hora de levantarse) son las variables predictivas y SQTT(calidad del sueño), la variable objetivo proveniente de aplicar la escala proporcionada por instrumento PSQI.
+
+```{r}
+SQ<-cbind.data.frame(d_preproc[,10:13],SQTT=d_preproc$SQTT)   
+```
+
+2.- Se genera el modelo de regresión múltiple con estas cuatro variables predictivas
+
+```{r}
+mod<-lm(SQTT ~., data = SQ)
+summary(mod)
+```
+
+3.- Se genera la gráfica de registros que tienen datos atípicos y que impactan en los resultados
+
+```{r}
+library(car)
+cooksd<-cooks.distance(mod)
+plot(cooksd, pch="*", cex=1, main="Observaciones que impacta los resultados (Distancia Cooks)")  # plot cook's distance
+abline(h = 4*mean(cooksd, na.rm=T), col="red")  # add cutoff line
+text(x=1:length(cooksd)+7, y=cooksd, labels=ifelse(cooksd>4*mean(cooksd, na.rm=T),names(cooksd),""), col="red")  # add labels
+
+
+```
+
+4.- Se genera el reporte de registros con valores atípicos que impactan los resultados
+
+```{r}
+library(ggplot2)
+library(bitops)
+library(RCurl)
+script <- getURL("https://raw.githubusercontent.com/arturo-laflor/util-R-codes/master/multiplot.R", ssl.verifypeer = FALSE)
+eval(parse(text = script),envir=.GlobalEnv)
+
+influyentes<-as.numeric(names(cooksd)[(cooksd > 2.0*mean(cooksd, na.rm=T))])  # influential row numbers
+SQ[influyentes, ]  # influential observations.
+
+SQ[-influyentes, ]  # influential observations.
+
+
+d_preproc[atipicos1,]
+
+atipicos1<-scores(SQ$SQ1,type = "z",prob = 0.90)%>%which(.)
+atipicos2<-scores(SQ$SQ2,type = "z",prob = 0.97)%>%which(.) 
+atipicos3<-scores(SQ$SQ3,type = "z",prob = 0.97)%>%which(.)
+atipicos4<-scores(SQ$SQ4,type = "z",prob = 0.97)%>%which(.) 
+
+histSQ1<-ggplot(data=d_preproc[-atipicos1,],aes(SQ1))+geom_histogram(bins = 30)+labs(y="Count")
+histSQ2<-ggplot(data=d_preproc[-influyentes,],aes(SQ2))+geom_histogram(bins = 30)+labs(y="Count")
+histSQ3<-ggplot(data=d_preproc[-influyentes,],aes(SQ3))+geom_histogram(bins = 30)+labs(y="Count")
+histSQ4<-ggplot(data=d_preproc[-atipicos4,],aes(SQ4))+geom_histogram(bins = 30)+labs(y="Count")
+
+boxplotSQ1<-ggplot(data=d_preproc[-influyentes,], aes(as.factor(DD2),SQ1))+geom_boxplot()+labs(x="Gender")
+boxplotSQ2<-ggplot(data=d_preproc[-influyentes,], aes(as.factor(DD2),SQ2))+geom_boxplot()+labs(x="Gender")
+boxplotSQ3<-ggplot(data=d_preproc[-influyentes,], aes(as.factor(DD2),SQ3))+geom_boxplot()+labs(x="Gender")
+boxplotSQ4<-ggplot(data=d_preproc[-atipicos4,], aes(as.factor(DD2),SQ4))+geom_boxplot()+labs(x="Gender")
+
+
+multiplot(histSQ1,histSQ2,histSQ3,histSQ4,boxplotSQ1,boxplotSQ2,boxplotSQ3,boxplotSQ4,cols=2)
+```
+```{r}
+library(outliers)
+library(magrittr)
+library(nortest)
+outlier(SQ$SQ4)
+summary(SQ$SQ1)
+
+SQ<-cbind.data.frame(d_preproc[,10:13],SQTT=d_preproc$SQTT)
+
+rownames(SQ) <- 1:nrow(SQ)
+
+atipicos1<-scores(SQ$SQ1,type = "z",prob = 0.997)%>%which(.) #obtiene la lista de índices de los elementos que con valor TRUE  
+SQ<-SQ[-atipicos1,]
+rownames(SQ) <- 1:nrow(SQ)
+atipicos2<-scores(SQ$SQ2,type = "z",prob = 0.997)%>%which(.) 
+SQ<-SQ[-atipicos2,]
+rownames(SQ) <- 1:nrow(SQ)
+atipicos3<-scores(SQ$SQ3,type = "z",prob = 0.997)%>%which(.)
+SQ<-SQ[-atipicos3,]
+rownames(SQ) <- 1:nrow(SQ)
+atipicos4<-scores(SQ$SQ4,type = "z",prob = 0.997)%>%which(.) 
+SQ<-SQ[-atipicos1,]
+rownames(SQ) <- 1:nrow(SQ)
+
+
+
+mod<-lm(SQTT ~., data = SQ)
+summary(mod)
+
+
+prueba<-c(1,1,6,13,14,14,14,15,15,16,18,18,18,19)
+scores
+at<-scores(prueba,type="chisq",prob = 0.9)
+?scores
+?outlier
+#pruebas de normalidad, la hipótesis nula es: Los datos provienen de una distribución normal, 
+#si p<.05 entonces Ho se rechaza, de lo contrario no se puede rechazar. (no es lo mismo que aceptarla)
+shapiro.test(SQ$SQ4)
+ad.test(SQ$SQ4)
+hist(SQ$SQ4) #histograma
+qqnorm(SQ$SQ4) #recta de normalidad
+#################################################pruebas de normalidad###########################
+
+
+SQ<-SQ[-atipicos4,]
+
+atipicos1
+atipicos2
+atipicos3
+atipicos4
+                 
+atipicos<-c(atipicos1,atipicos2,atipicos3,atipicos4)
+duplicated(atipicos)
+
+temp1<-atipicos[duplicated(atipicos)]
+temp2<-atipicos[unique(atipicos)]
+
+
+```
+
+

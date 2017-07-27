@@ -1,6 +1,6 @@
 --- 
-title: "Preparación de datos"
-author: "DAIH:Arturo Laflor"
+title: "Sleep quality analysis"
+author: "Arturo Laflor"
 date: "`r Sys.Date()`"
 site: bookdown::bookdown_site
 output: bookdown::pdf_book
@@ -9,19 +9,9 @@ bibliography: [book.bib, packages.bib]
 biblio-style: apalike
 link-citations: yes
 github-repo: rstudio/bookdown-demo
-description: "Preparación de datos para su análisis."
+description: "This is a draft of the work done in the project of sleep quality through sleep hygiene factors."
 ---
 
-<!-- output: bookdown::pdf_book -->
+# Description of the work
 
-```{r eval=FALSE, include=FALSE}
-devtools::install_github("rstudio/bookdown")
-```
-
-
-```{r include=FALSE}
-# automatically create a bib database for R packages
-knitr::write_bib(c(
-  .packages(), 'bookdown', 'knitr', 'rmarkdown'
-), 'packages.bib')
-```
+This work describes the progress that has been made so far in estimating sleep quality, based on sleep hygiene factors. The characterization of the phenomenon is being carried out in two stages, the first, described in this work, has to do with the generation of a model that estimates the quality of sleep and that has been trained with subjective data from a questionnaire applied to 341 volunteers . The second stage is in process, this stage includes a logbook that records the factors of a person's sleep hygiene every day and the measurement of quality is not subjective, but is measured by an electronic device. In this way, in the end, an analysis of both characterizations will be made and a model will be constructed that takes into account the two perspectives to obtain a better approximation in their predictions.

@@ -1,0 +1,39 @@
+\documentclass[10pt,letterpaper,oneside]{article}
+\usepackage[latin1]{inputenc}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{graphicx}
+\usepackage{multirow}
+\usepackage{multicol}
+\begin{document}
+% Please add the following required packages to your document preamble:
+% \usepackage{multirow}
+\begin{table}[ht]
+	\centering
+	\caption{PSQI features description}
+	\label{tab:psqi-features-description}
+	\begin{tabular}{|l|l|l|p{3cm}|p{5cm}|}
+		\hline
+		\multicolumn{1}{|c|}{\textbf{Group}} & \multicolumn{1}{c|}{\textbf{Feature}} & \multicolumn{1}{c|}{\textbf{Type}} & \multicolumn{1}{c|}{\textbf{Values}}                    & \multicolumn{1}{c|}{\textbf{Purpose}}                                                                              \\ \hline
+		\multirow{18}{*}{PSQI}               & SQ1                                   & \multirow{4}{*}{Continuous}        & A real numer.   $ 0 \leq  SQ1 \leq 12 $                    & \multirow{18}{5cm}{Provide information to PSQI Scale. A 0 value is the best for sleep quality and 3 is the worst} \\ \cline{2-2} \cline{4-4}
+		& SQ2                                   &                                    & An integer number. $ 0 \leq SQ2 \leq 60 $               &                                                                                                                 \\ \cline{2-2} \cline{4-4}
+		& SQ3                                   &                                    & A real number. $ 0 \leq SQ3 \leq 12 $                      &                                                                                                                 \\ \cline{2-2} \cline{4-4}
+		& SQ4                                   &                                    & A real number. $ 0 \leq SQ4 \leq 12 $                      &                                                                                                                 \\ \cline{2-4}
+		& SQ5a                                  & \multirow{14}{*}{Categorical}      & \multirow{14}{3cm}{A level variable. $ 0 \leq SQ* \leq 3 $.} &                                                                                                                 \\ \cline{2-2}
+		& SQ5b                                  &                                    &                                                         &                                                                                                                 \\ \cline{2-2}
+		& SQ5c                                  &                                    &                                                         &                                                                                                                 \\ \cline{2-2}
+		& SQ5d                                  &                                    &                                                         &                                                                                                                 \\ \cline{2-2}
+		& SQ5e                                  &                                    &                                                         &                                                                                                                 \\ \cline{2-2}
+		& SQ5f                                  &                                    &                                                         &                                                                                                                 \\ \cline{2-2}
+		& SQ5g                                  &                                    &                                                         &                                                                                                                 \\ \cline{2-2}
+		& SQ5h                                  &                                    &                                                         &                                                                                                                 \\ \cline{2-2}
+		& SQ5i                                  &                                    &                                                         &                                                                                                                 \\ \cline{2-2}
+		& SQ5j                                  &                                    &                                                         &                                                                                                                 \\ \cline{2-2}
+		& SQ6                                   &                                    &                                                         &                                                                                                                 \\ \cline{2-2}
+		& SQ7                                   &                                    &                                                         &                                                                                                                 \\ \cline{2-2}
+		& SQ8                                   &                                    &                                                         &                                                                                                                 \\ \cline{2-2}
+		& SQ9                                   &                                    &                                                         &                                                                                                                 \\ \hline
+	\end{tabular}
+\end{table}
+\end{document}

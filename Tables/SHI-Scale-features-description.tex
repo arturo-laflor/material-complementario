@@ -1,0 +1,26 @@
+\documentclass[10pt,letterpaper,oneside]{article}
+\usepackage[latin1]{inputenc}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{graphicx}
+\usepackage{multirow}
+\usepackage{multicol}
+\begin{document}
+% Please add the following required packages to your document preamble:
+% \usepackage{multirow}
+\begin{table}[ht]
+	\centering
+	\caption{SHI scale feature description}
+	\label{tab:SHI-scale-feature-description}
+	\begin{tabular}{|l|l|l|p{4cm}|p{4cm}|}
+		\hline
+		\multicolumn{1}{|c|}{\textbf{Group}} & \multicolumn{1}{c|}{\textbf{Feature}} & \multicolumn{1}{c|}{\textbf{Type}} & \multicolumn{1}{c|}{\textbf{Value}}                    & \multicolumn{1}{c|}{\textbf{Role}} \\ \hline
+		          & SHSTR                                 &         & Sum of five SH features. $ 0 < SQ*\leq 20 $.           & Group of stress features           \\ \cline{2-2} \cline{4-5} 
+		& SHDIS                                 &                                    & Sum of five SH features. $ 0 < SQ*\leq 20 $.           & Group of disruptors features       \\ \cline{2-2} \cline{4-5} 
+		\multirow{5}{*}{SHI SCALE} & SHCH          &       \multirow{5}{*}{Continuous}                             & Sum of six SH features. $ 0 < SQ*\leq 24 $.            & Group of circadian features        \\ \cline{2-2} \cline{4-5} 
+		& SHDG                                  &                                    & Sum of three SH features. $ 0 < SQ*\leq 12 $.          & Group of drugs features            \\ \cline{2-2} \cline{4-5} 
+		& SHTT                                  &                                    & Sum of SHSTR,SHDIS, SHCH and SHDG. $ 0 < SQ*\leq 76 $. & Total of SHI                       \\ \hline
+	\end{tabular}
+\end{table}
+\end{document}

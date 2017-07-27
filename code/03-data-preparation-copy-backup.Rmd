@@ -1,0 +1,278 @@
+---
+output:
+  pdf_document: default
+  html_document: default
+  word_document: default
+---
+
+```{r setup, include=FALSE}
+library(ggplot2)
+library(bitops)
+library(RCurl)
+
+#funciones online
+script <- getURL("https://raw.githubusercontent.com/arturo-laflor/util-R-codes/master/QOfCategoricalF.R", ssl.verifypeer = FALSE)
+eval(parse(text = script),envir=.GlobalEnv)
+
+script <- getURL("https://raw.githubusercontent.com/arturo-laflor/util-R-codes/master/QOfContinuousF.R", ssl.verifypeer = FALSE)
+eval(parse(text = script),envir=.GlobalEnv)
+
+script <- getURL("https://raw.githubusercontent.com/arturo-laflor/util-R-codes/master/multiplot.R", ssl.verifypeer = FALSE)
+eval(parse(text = script),envir=.GlobalEnv)
+
+
+
+
+#Es necesario poner encoding=utf8 para que los acentossean tratados como acentos
+
+#Taking user info to establish the appropriate path to public functions
+user<-Sys.info()[7]
+user<-user[[1]]
+
+#loading private functions
+
+source(file="./code/preproceso.R",encoding = "UTF8")
+source(file="./code/preproceso_1.R",encoding = "UTF8")
+source(file="./code/baremo_PSQI.R",encoding = "UTF8")
+source(file="./code/baremo_SHI.R",encoding = "UTF8")
+
+source(file="./code/selecciona_muestra.R",encoding = "UTF8")
+source(file="./code/elimina_faltantes.R",encoding = "UTF8")
+source(file="./code/convierte_binaria.R",encoding = "UTF8")
+source(file="./code/graba_recupera_archivo.R",encoding = "UTF8")
+source(file="./code/preproceso.R",encoding = "UTF8")
+source(file="./code/elige_sanos.R",encoding = "UTF8")
+source(file="./code/elige_no_sanos.R",encoding = "UTF8")
+source(file="./code/elige_no_anonimos.R",encoding = "UTF8")
+source(file="./code/elige_anonimos.R",encoding = "UTF8")
+source(file="./code/calcula_por_grupos.R",encoding = "UTF8")
+source(file="./code/asigna_nombres.R",encoding = "UTF8")
+
+
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+# Data preparation
+
+This pre-process of refinenment of data has the goal of generate a set of quality data is based in the recommendations of [@Kelleher2015]. The resulting dataset will allow runs the algorithms to select the relevant features to generate the model. Three aspects are considered for the pre-process:  missing values, cardinality and outliers. Using the right metrics, it is possible to take a decision of columns and records that must remain in the data set as relevant information, as well as data that must be removed.
+
+
+## Missing values
+```{r elimina-faltantes}
+ruta<-paste("C:/Users/",user,"/Google Drive/Doctorado/Tesis/Data/",sep = "") 
+  d_crudos<-read.csv(file=paste(ruta,"responses.csv",sep = ""),header = T,sep = ",")
+  
+  dt<-d_crudos[-1]
+  dt[,1]<-as.character(dt[,1])
+  dt[dt[,1]=='',1]<-'anonimo'
+  
+  #asigna NA a los campos vacios excepto en el primer campo que es el email.
+  #este campo es opcional por lo tanto en muchos registros no estara.
+  dt[dt=='']<-NA
+  
+  dt<-asigna_nombres(dt)
+  dt<-dt[-1]
+  
+  write.csv(dt,file = paste(ruta,"respNA.csv",sep = ""))
+  
+  #se utiliza el paquete amelia para generar el mapa de datos faltantes
+  #AmeliaView()
+  
+  #Selecciona datos faltantes y los guarda en un archivo
+  dtna<-dt[!complete.cases(dt),]
+  dtna<-dtna[-1]
+  write.csv(dt,file = paste(ruta,"respNA.csv",sep = ""))
+  
+```
+
+In a preliminar revision of the data, 3 records was eliminated due the absence of data in each of its columns. In the next step, the Amelia package [@Amelia2011] was used to examine the missing values. The Figure \@ref(missing-map) shows a map of missing values, in the horizontal axis are the names of predictive variables, while the vertical axis is the number of record that contains the missing values, represented by beige color. 
+
+```{r missing-map, fig.cap='Map of missing values in the dataset', out.width='50%', fig.asp=.75, fig.align='center'}
+knitr::include_graphics("images/mapOfMissingValues.png")
+
+```
+
+This twenty records contains 21 missing values distributed in 14 variables (see Fig. \@ref(NumberOfNAsBar)). As the missing values are not concentrated in a single variable and the total of records with missing values is not significant for the data set, we proceeded to delete the missing records. We did not choose to use imputation techniques, because there are no previous studies in our hands that show trends in the data.
+
+```{r cuenta_de_NAs}
+dtna<-dtna[-c(16,17,21),]
+
+countofna<-data.frame(NAs=apply(dtna,2,FUN = function(x) length(x[is.na(x)])))
+
+xmaycero<-apply(countofna,2,FUN = function(x) x[x>0])
+
+xmaycero<-data.frame(P_Variable=row.names(xmaycero),xmaycero)
+
+#gb<-ggplot(data=xmaycero,aes(P_Variable,NAs))+geom_col(width = 0.5,aes(fill=NAs))
+gb<-ggplot(data=xmaycero,aes(P_Variable,NAs))+geom_col(width = 0.5)
+
+```
+
+
+```{r NumberOfNAsBar, fig.cap='Number of Missing Values per Variable', out.width='50%', fig.asp=.75, fig.align='center', echo=FALSE}
+knitr::include_graphics("images/NumberOfNasPerVariableBar.png")
+
+```
+
+```{r cleaning-data0}
+# d_preproc<-preproceso(d_crudos,"2_clases")
+# 
+# dtContinuous<-cbind.data.frame(DD1=d_preproc$DD1,d_preproc[,10:13],DD1=d_preproc$SQTT,d_preproc[,58:62])  
+# dtCategoricalDEM<-d_preproc[,3:9]
+# dtCategoricalSQ<-cbind.data.frame(d_preproc[,14:27],SQCL=d_preproc$SQCL)
+# dtCategoricalSH<-d_preproc[,28:48]  
+```
+
+## Data quality
+
+After the deletion of rows with missing values, it was proceeded to clean the data. Many data were not captured in correct format, for example, the time that people was to the bed should be in this format "hh:mm", however many people added the p.m. acronym. In the same way, the latency time should be captured as "mm" in integer format, nevertheless, had people that added the word "minute" to the field. On the other hand, columns to record data corresponding to the compute of the scales for the PSQI and SHI questionnaires were added to the dataset. A dozen of R functions were written to accomplish this task. At the end of this pre-process, the dataset was conformed by 61 columns. The Table \@ref(tab-columns-distribution) shows the distribution of the 61 columns grouped by its nature.
+
+
+\begin{table}[ht]
+\centering
+\caption{Columns distribution by its nature}
+\label{tab-columns-distribution}
+\begin{tabular}{lrrr}
+\hline
+Group             & Categorical & Continuous & Total \\ \hline
+Demographics data & 7           & 1          & 8     \\
+PSQI              & 14          & 4          & 18    \\
+SHI               & 21          & 0          & 21    \\
+Scale PSQI        & 8           & 1          & 9     \\
+Scale SHI         & 0           & 5          & 5     \\ \hline
+Total             & 50          & 11         & 61    \\ \hline
+\end{tabular}
+\end{table}
+
+<!-- | Group             | Categorical | Continuous | Total | -->
+<!-- |-------------------|------------:|-----------:|------:| -->
+<!-- | Demographics data |      7      |      2     |   9   | -->
+<!-- | PSQI              |      14     |      4     |   18  | -->
+<!-- | SHI               |      21     |      0     |   21  | -->
+<!-- | Scale PSQI        |      8      |      1     |   9   | -->
+<!-- | Scale SHI         |      4      |      1     |   5   | -->
+<!-- |------------------ |------------ |----------- |------ | -->
+<!-- | Total             |      54     |      8     |   62  | -->
+
+This dataset contains 60 variables that can be used as predictive variables, one continuous target variable (SQTT) that describes the quality of sleep in a range of $[0-21]$ were $0$ is the best quality of sleep and $21$ is the worst one; and one categorical tarjet variable that describes the quality of sleep as *poor quality of sleep* and *good quality of sleep*, based in the following formula provided by the PSQI questionnaire.  
+
+$$
+SQ=\begin{cases}\text{good quality of sleep} & 0\geq SQTT \leq 5\\\text{poor quality of sleep} & SQTT > 5 \end{cases}
+$$
+
+Of the 60 variables, only 21 of them were used as predictive variables to meet with the defined purposes at the begining of the work. Only those variables related with the sleep hygiene were taken into account, since the aims is to estimate the quality of sleep from the sleep hygiene habits through a model based in machine learning algorithms.
+
+Nevertheless, in the following step, an analysis of quality of data was performed to the total of the variables due to the variables that do not intervene as predictive, are used with filter purposes. For instance, in demographics variables, the categorical variable DD7, indicates if the person has a chronic illness as diabetes or hypertension. In the case where this variable has a value distinct of $0$, the record was eliminated for the process of model training.
+
+For categorical variables, nine metrics were analyzed: quantity, missing values, cardinality, mode, mode frequency, mode percent, second mode, second mode frequency and second mode percent, while for continuous variables ten metrics were analyzed: quantity, missing values, cardinality, minimum value, first quartile, median, third quartile, maximum value, mean, and standard deviation. In total 10 tables were generated, five for continuous variables and five for categorical variables. To show the estructure and content of the tables, two of them are shown here, one for continuous (See Tab. \@ref(tab-continuous-quality-data)) and one for categorical variables \@ref{tab-categorical-quality-data}.
+
+
+
+```{r cleaning-data, echo=FALSE}
+d_preproc<-preproceso(d_crudos,"2_clases")
+
+#write.csv(d_preproc,file="datapreproc.csv",col.names = T)
+
+
+```
+
+
+```{r table-quality-analysis}
+library(DT)
+SQDUR<-cbind.data.frame(d_preproc[,10:13])
+QualityTableSQDUR<-QOfContinuousF(SQDUR)
+
+#datatable(QualityTableSQDUR)
+
+```
+\pagebreak
+
+
+
+```{r continuousVar}
+#QualityTableSQDUR
+
+```
+\begin{table}[ht]
+\centering
+\caption{Four continuous variables containing the duration of sleep}
+\label{tab-continuous-quality-data}
+\begin{tabular}{lllllllllll}
+\hline
+    &  Count & Miss & Card  & Min & Qrt1 & Median & Qrt3 &  Max &  Mean &  Sdev     \\ \hline
+SQ1 &  316  &  0  & 29 & 0.00 & 10.00 & 11.00 & 11.02 & 12.50 & 10.02 & 2.65 \\
+SQ2 &  316  &  0  & 15 & 1.00 & 5.00 &  15.00 & 20.00 & 60.00 & 15.07 & 11.99 \\
+SQ3 &  316  &  0  & 39 & 3.00 & 5.08 &   6.00 & 7.00 & 11.00  & 6.19  & 1.28 \\
+SQ4 &  316  &  0  & 101 & -0.05 & 6.17  & 6.88 & 7.75 & 10.75 & 6.94  & 1.31 \\ \hline
+\end{tabular}
+\end{table}
+
+It is possible to observe in this table that there are some irregularities in the data, as we can see, a negative value is the minimum value in the SQ4 variable; this variable represents the *time to wake up*, thus no negative value must be enter in this field, likewise, it appear a $0.0$ value as the minimun value in the SQ1 variable, which is wrong because this is the time that respondents said go to bed, and, in this case, the appropriate answer should be $12:00$. All other data in the table indicate that the variables have good quality to participate in the analysis, so, after refining the procedure of filtering and transforming numeric data, these variables can be used when required. The Table \@ref(tab-data-quality-plan) summarizes the data quality issues and the potential strategies to attend them. The cardinality, one relevant metrics of quality/no quality, will be analyzed in the next section taken into account all involved variables.  
+
+\begin{table}[ht]
+\centering
+\caption{Data quality plan}
+\label{tab-data-quality-plan}
+\begin{tabular}{|l|p{5cm}|p{5cm}|}
+\hline
+Feature & Data quality issue  & Strategie \\ \hline
+SQ1     & Data contain 0.0, the correct value should be 12.00  & Refine the process of convert data for this field  \\ \hline
+SQ9     & Data contain negative values, it is wrong because the data represents the time to wake up & Refine the process validating the data, to correct the problem, or, eliminate the records with this issue. \\ \hline  
+\end{tabular}
+\end{table}
+
+
+```{r table-quality-analysis-2}
+
+SHI10<-cbind.data.frame(d_preproc[,28:37])
+QualityTableSHI10<-QOfCategoricalF(SHI10)
+#QualityTableSHI10
+
+
+#datatable(QualityTableSQDUR)
+
+```
+
+
+\begin{table}[ht]
+\centering
+\caption{First 10 categorical variables containing data of sleep hygiene}
+\label{tab-categorical-quality-data}
+\begin{tabular}{llllllllll}
+\hline
+Name & Count & Miss & Card & Mode & ModeFrec & ModePerc & Mode2 & Mode2Frec & Mode2Perc \\ \hline
+SH1  & 316   & 0    & 5    & 1    & 110      & 34.81\%  & 0     & 106       & 33.54\%   \\
+SH2  & 316   & 0    & 5    & 2    & 110      & 34.81\%  & 1     & 105       & 33.23\%   \\
+SH3  & 316   & 0    & 5    & 1    & 150      & 47.47\%  & 2     & 73        & 23.10\%   \\
+SH4  & 316   & 0    & 5    & 0    & 190      & 60.13\%  & 1     & 63        & 19.94\%   \\
+SH5  & 316   & 0    & 5    & 0    & 167      & 52.85\%  & 2     & 59        & 18.67\%   \\
+SH6  & 316   & 0    & 5    & 0    & 142      & 44.94\%  & 1     & 69        & 21.84\%   \\
+SH7  & 316   & 0    & 5    & 0    & 135      & 42.72\%  & 1     & 100       & 31.65\%   \\
+SH8  & 316   & 0    & 5    & 0    & 301      & 95.25\%  & 3     & 5         & 1.58\%    \\
+SH9  & 316   & 0    & 4    & 0    & 262      & 82.91\%  & 1     & 29        & 9.18\%    \\
+SH10 & 316   & 0    & 5    & 0    & 209      & 66.14\%  & 1     & 54        & 17.09\%   \\ \hline
+\end{tabular}
+\end{table}
+
+
+The same analysis was performed with the 10 tables of continuous and categorical variables. Aditionally, histograms and box plots were generated for the continuous variables in order to identify outliers. We show the relevant outcomes in the next sections and we make an evaluation of the quality of data in general terms. The Fig. \@ref(fig-hist-boxplots-cv) shows the histograms and boxplots of the four continuous variables in the Table \@ref(tab-continuous-quality-data). 
+
+```{r fig-hist-boxplots-cv, fig.cap='Histogramas and boxplot of continuous variables', out.width='100%', fig.asp=.90, fig.align='center', echo=FALSE}
+knitr::include_graphics("images/hist-boxplots-continuous-variables.png")
+
+```
+
+These plots shows some outliers in the dataset, 
+
+
+
+## Irregular Cardinality and mode
+
+In Table \@ref(tab-categorical-quality-data), the cardinality shows that all possible value $[0-5]$ for each answer is represented in the data, except by the SH9 variable where a value is not in the answers of the respondents. It is good for the quality of data, however, there are two variables with high mode. The 82.9 % of the respondents, answered *never ($0$)*  to the question SH9 **I use alcohol within 4 hours of going to bed or after going to bed.**, while the 95.25% answered *never ($0$)*  to the question SH8 **I use tobacco within 4 hours of going to bed or after going to bed.**, which means that there are few variability in the data in these two variables and it is possible to dispense with these data for the analysis, since they do not contribute much information to the studied phenomenon, at least for this population. The other 11 categorical variables for SHI, have a cardinality of 5, and the higher mode is placed in SH17 **I sleep in an uncomfortable bedroom, due to too cold.** were a $65.51\%$ of the respondents answered *never ($0$)* for this question. This means that the answers have a good range of variability to be analized, and to participate as candidate of be selected as feature to training the model.
+
+
+## Outliers
+
+
+
+# Bibliography

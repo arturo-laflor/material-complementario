@@ -1,0 +1,27 @@
+\documentclass[10pt,letterpaper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{multirow}
+\usepackage{multicol}
+\begin{document}
+\begin{table}[ht]
+	\centering
+	\caption{Demographic features description}
+	\label{tab:demographic-feature-description}
+	\begin{tabular}{|l|l|l|p{5cm}|p{4cm}|}
+		\hline
+		\multicolumn{1}{|c|}{\textbf{Grupo}} & \multicolumn{1}{c|}{\textbf{Feature}} & \multicolumn{1}{c|}{\textbf{Type}} & \multicolumn{1}{c|}{\textbf{Values}}                                                     & \multicolumn{1}{c|}{\textbf{Role}}                              \\ \hline
+		ID                                   & EMAIL                                 & Text                               & inf                                                                                      & identificator                                                   \\ \hline
+		\multirow{8}{*}{}         & DD1                                   & Continuous                         & {[}1-100{]}                                                                              & \multirow{6}{4cm}{Demographic data for statistical purposes only} \\ \cline{2-4}
+		& DD2                                   &        & Female, Male                                                                             &                                                                 \\ \cline{2-2} \cline{4-4} 
+		& DD3                                   &                                    & Student, Employer, Teacher, Independent professional, Other                              &                                                                 \\ \cline{2-2} \cline{4-4}
+		& DD4                                   & \multirow{6}{*}{Categorical}                                  & Intellectual, Physical, More intellectual than physical, More physical than intellectual &                                                                 \\ \cline{2-2} \cline{4-4} {Demographic}
+		& DD5                                   &                                    & SDA, Catholic, Jehovah's withess, Evangelic, Other                                       &                                       \\ \cline{2-2} \cline{4-4} 
+		& DD6                                   &                                    & Married, Single, Divorced, Free Union, Other                                             &                                                                 \\ \cline{2-2} \cline{4-5} 
+		& DD7                                   &                                    & No, Hypertension, Diabetes, Depression, Other                                            & Demographic information with filtering purposes                 \\ \cline{2-5} 
+		& DD8                                   &                                    & No,Financial, Divorce process, Loss of Family, Other                                     & Financial,                                                      \\ \hline
+	\end{tabular}
+\end{table}
+\end{document}

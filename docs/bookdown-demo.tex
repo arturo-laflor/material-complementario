@@ -24,8 +24,8 @@
 \usepackage[margin=1in]{geometry}
 \usepackage{hyperref}
 \hypersetup{unicode=true,
-            pdftitle={Preparación de datos},
-            pdfauthor={DAIH:Arturo Laflor},
+            pdftitle={Sleep quality analysis},
+            pdfauthor={Arturo Laflor},
             pdfborder={0 0 0},
             breaklinks=true}
 \urlstyle{same}  % don't use monospace font for urls
@@ -116,10 +116,10 @@
 }
 
 \setlength{\droptitle}{-2em}
-  \title{Preparación de datos}
+  \title{Sleep quality analysis}
   \pretitle{\vspace{\droptitle}\centering\huge}
   \posttitle{\par}
-  \author{DAIH:Arturo Laflor}
+  \author{Arturo Laflor}
   \preauthor{\centering\large\emph}
   \postauthor{\par}
   \predate{\centering\large\emph}
@@ -131,6 +131,7 @@
 \usepackage{multirow}
 \usepackage{multicol}
 \usepackage{float}
+\usepackage{tabularx}
 \makeatletter
 \def\thm@space@setup{%
   \thm@preskip=8pt plus 2pt minus 4pt
@@ -145,6 +146,21 @@
 \setcounter{tocdepth}{1}
 \tableofcontents
 }
+\chapter{Description of the work}\label{description-of-the-work}
+
+This work describes the progress that has been made so far in estimating
+sleep quality, based on sleep hygiene factors. The characterization of
+the phenomenon is being carried out in two stages, the first, described
+in this work, has to do with the generation of a model that estimates
+the quality of sleep and that has been trained with subjective data from
+a questionnaire applied to 341 volunteers . The second stage is in
+process, this stage includes a logbook that records the factors of a
+person's sleep hygiene every day and the measurement of quality is not
+subjective, but is measured by an electronic device. In this way, in the
+end, an analysis of both characterizations will be made and a model will
+be constructed that takes into account the two perspectives to obtain a
+better approximation in their predictions.
+
 \chapter{Data preparation}\label{dataprep}
 
 \begin{Shaded}
@@ -787,7 +803,8 @@ regresión logítica multivariable proporcionada por el paquete
   \CommentTok{#imputa los datos con el dataset #dos en este caso elegido arbitrariamente  }
   \NormalTok{completeSH<-}\KeywordTok{complete}\NormalTok{(imputedSH,}\DecValTok{2}\NormalTok{)}
   
-  \NormalTok{dpreproc1_imputed<-}\KeywordTok{regeneraImputedDS}\NormalTok{(dordered,completeSH,colNA,}\KeywordTok{colnames}\NormalTok{(dprepro_1))}
+  \CommentTok{#dpreproc1_imputed<-regeneraImputedDS(dordered,completeSH,colNA,colnames(dprepro_1))}
+  \NormalTok{dpreproc1_imputed<-}\KeywordTok{regeneraImputedDS}\NormalTok{(dordered,completeSH,colNA)}
 \end{Highlighting}
 \end{Shaded}
 
