@@ -1,0 +1,944 @@
+\documentclass[]{book}
+\usepackage{lmodern}
+\usepackage{amssymb,amsmath}
+\usepackage{ifxetex,ifluatex}
+\usepackage{fixltx2e} % provides \textsubscript
+\ifnum 0\ifxetex 1\fi\ifluatex 1\fi=0 % if pdftex
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+\else % if luatex or xelatex
+  \ifxetex
+    \usepackage{mathspec}
+  \else
+    \usepackage{fontspec}
+  \fi
+  \defaultfontfeatures{Ligatures=TeX,Scale=MatchLowercase}
+\fi
+% use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+% use microtype if available
+\IfFileExists{microtype.sty}{%
+\usepackage{microtype}
+\UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\usepackage[margin=1in]{geometry}
+\usepackage{hyperref}
+\hypersetup{unicode=true,
+            pdftitle={Preparación de datos},
+            pdfauthor={DAIH:Arturo Laflor},
+            pdfborder={0 0 0},
+            breaklinks=true}
+\urlstyle{same}  % don't use monospace font for urls
+\usepackage{natbib}
+\bibliographystyle{apalike}
+\usepackage{color}
+\usepackage{fancyvrb}
+\newcommand{\VerbBar}{|}
+\newcommand{\VERB}{\Verb[commandchars=\\\{\}]}
+\DefineVerbatimEnvironment{Highlighting}{Verbatim}{commandchars=\\\{\}}
+% Add ',fontsize=\small' for more characters per line
+\usepackage{framed}
+\definecolor{shadecolor}{RGB}{248,248,248}
+\newenvironment{Shaded}{\begin{snugshade}}{\end{snugshade}}
+\newcommand{\KeywordTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{{#1}}}}
+\newcommand{\DataTypeTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{{#1}}}
+\newcommand{\DecValTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{{#1}}}
+\newcommand{\BaseNTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{{#1}}}
+\newcommand{\FloatTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{{#1}}}
+\newcommand{\ConstantTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{{#1}}}
+\newcommand{\CharTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{{#1}}}
+\newcommand{\SpecialCharTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{{#1}}}
+\newcommand{\StringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{{#1}}}
+\newcommand{\VerbatimStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{{#1}}}
+\newcommand{\SpecialStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{{#1}}}
+\newcommand{\ImportTok}[1]{{#1}}
+\newcommand{\CommentTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{{#1}}}}
+\newcommand{\DocumentationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{{#1}}}}}
+\newcommand{\AnnotationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{{#1}}}}}
+\newcommand{\CommentVarTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{{#1}}}}}
+\newcommand{\OtherTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{{#1}}}
+\newcommand{\FunctionTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{{#1}}}
+\newcommand{\VariableTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{{#1}}}
+\newcommand{\ControlFlowTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{{#1}}}}
+\newcommand{\OperatorTok}[1]{\textcolor[rgb]{0.81,0.36,0.00}{\textbf{{#1}}}}
+\newcommand{\BuiltInTok}[1]{{#1}}
+\newcommand{\ExtensionTok}[1]{{#1}}
+\newcommand{\PreprocessorTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{{#1}}}}
+\newcommand{\AttributeTok}[1]{\textcolor[rgb]{0.77,0.63,0.00}{{#1}}}
+\newcommand{\RegionMarkerTok}[1]{{#1}}
+\newcommand{\InformationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{{#1}}}}}
+\newcommand{\WarningTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{{#1}}}}}
+\newcommand{\AlertTok}[1]{\textcolor[rgb]{0.94,0.16,0.16}{{#1}}}
+\newcommand{\ErrorTok}[1]{\textcolor[rgb]{0.64,0.00,0.00}{\textbf{{#1}}}}
+\newcommand{\NormalTok}[1]{{#1}}
+\usepackage{longtable,booktabs}
+\usepackage{graphicx,grffile}
+\makeatletter
+\def\maxwidth{\ifdim\Gin@nat@width>\linewidth\linewidth\else\Gin@nat@width\fi}
+\def\maxheight{\ifdim\Gin@nat@height>\textheight\textheight\else\Gin@nat@height\fi}
+\makeatother
+% Scale images if necessary, so that they will not overflow the page
+% margins by default, and it is still possible to overwrite the defaults
+% using explicit options in \includegraphics[width, height, ...]{}
+\setkeys{Gin}{width=\maxwidth,height=\maxheight,keepaspectratio}
+\IfFileExists{parskip.sty}{%
+\usepackage{parskip}
+}{% else
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{6pt plus 2pt minus 1pt}
+}
+\setlength{\emergencystretch}{3em}  % prevent overfull lines
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+\setcounter{secnumdepth}{5}
+% Redefines (sub)paragraphs to behave more like sections
+\ifx\paragraph\undefined\else
+\let\oldparagraph\paragraph
+\renewcommand{\paragraph}[1]{\oldparagraph{#1}\mbox{}}
+\fi
+\ifx\subparagraph\undefined\else
+\let\oldsubparagraph\subparagraph
+\renewcommand{\subparagraph}[1]{\oldsubparagraph{#1}\mbox{}}
+\fi
+
+%%% Use protect on footnotes to avoid problems with footnotes in titles
+\let\rmarkdownfootnote\footnote%
+\def\footnote{\protect\rmarkdownfootnote}
+
+%%% Change title format to be more compact
+\usepackage{titling}
+
+% Create subtitle command for use in maketitle
+\newcommand{\subtitle}[1]{
+  \posttitle{
+    \begin{center}\large#1\end{center}
+    }
+}
+
+\setlength{\droptitle}{-2em}
+  \title{Preparación de datos}
+  \pretitle{\vspace{\droptitle}\centering\huge}
+  \posttitle{\par}
+  \author{DAIH:Arturo Laflor}
+  \preauthor{\centering\large\emph}
+  \postauthor{\par}
+  \predate{\centering\large\emph}
+  \postdate{\par}
+  \date{2017-07-27}
+
+\usepackage{booktabs}
+\usepackage{amsthm}
+\usepackage{multirow}
+\usepackage{multicol}
+\usepackage{float}
+\makeatletter
+\def\thm@space@setup{%
+  \thm@preskip=8pt plus 2pt minus 4pt
+  \thm@postskip=\thm@preskip
+}
+\makeatother
+
+\begin{document}
+\maketitle
+
+{
+\setcounter{tocdepth}{1}
+\tableofcontents
+}
+\chapter{Data preparation}\label{dataprep}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{library}\NormalTok{(ggplot2)}
+\KeywordTok{library}\NormalTok{(bitops)}
+\KeywordTok{library}\NormalTok{(RCurl)}
+\CommentTok{#funciones online}
+\NormalTok{script <-}\StringTok{ }\KeywordTok{getURL}\NormalTok{(}\StringTok{"https://raw.githubusercontent.com/arturo-laflor/util-R-codes/master/QOfCategoricalF.R"}\NormalTok{, }\DataTypeTok{ssl.verifypeer =} \OtherTok{FALSE}\NormalTok{)}
+\KeywordTok{eval}\NormalTok{(}\KeywordTok{parse}\NormalTok{(}\DataTypeTok{text =} \NormalTok{script),}\DataTypeTok{envir=}\NormalTok{.GlobalEnv)}
+
+\NormalTok{script <-}\StringTok{ }\KeywordTok{getURL}\NormalTok{(}\StringTok{"https://raw.githubusercontent.com/arturo-laflor/util-R-codes/master/QOfContinuousF.R"}\NormalTok{, }\DataTypeTok{ssl.verifypeer =} \OtherTok{FALSE}\NormalTok{)}
+\KeywordTok{eval}\NormalTok{(}\KeywordTok{parse}\NormalTok{(}\DataTypeTok{text =} \NormalTok{script),}\DataTypeTok{envir=}\NormalTok{.GlobalEnv)}
+
+\NormalTok{script <-}\StringTok{ }\KeywordTok{getURL}\NormalTok{(}\StringTok{"https://raw.githubusercontent.com/arturo-laflor/util-R-codes/master/multiplot.R"}\NormalTok{, }\DataTypeTok{ssl.verifypeer =} \OtherTok{FALSE}\NormalTok{)}
+\KeywordTok{eval}\NormalTok{(}\KeywordTok{parse}\NormalTok{(}\DataTypeTok{text =} \NormalTok{script),}\DataTypeTok{envir=}\NormalTok{.GlobalEnv)}
+
+\NormalTok{knitr::opts_chunk$}\KeywordTok{set}\NormalTok{(}\DataTypeTok{echo =} \OtherTok{TRUE}\NormalTok{,}\DataTypeTok{root.dir=}\StringTok{"C:/Master/Libro-Pearson-CETYS/"}\NormalTok{,}\DataTypeTok{fig.pos =} \StringTok{'H'}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+Hasta aquí ya sabes que los datos son de suma importancia para tomar
+decisiones que pueden hacer crecer tu capacidad de ingresos en un
+negocio. Cómo ya se te mencionó, dichos datos normalmente se encontrarán
+almacenados en el disco duro de alguna computadora destinada para este
+fin (cuando las empresas son grandes, a las computadoras que almacenan
+los datos se conocen como ``servidores de base de datos''). Sin embargo,
+antes de que los datos estén almacenados y listos para ser utilizados en
+el análisis que permitirá extraer información útil para el negocio, los
+datos normalmente deben recibir cierto tratamiento. Este proceso se
+denomina ``preparación de datos'' porque verifica que los datos con los
+que se realizarán los análisis para la toma de decisiones estén
+``libres'' de imperfecciones hasta donde sea posible. De esta manera, se
+puede decir que los datos ``se preparan'' previamente para el análisis,
+de tal forma que los algoritmos (programas de computadora especializado
+en tareas que generan información relevante), trabajen con datos cuya
+calidad les permita un desempeño óptimo. Las principales imperfecciones
+de los datos son: Registros con datos faltantes, registros con datos en
+formato incorrecto, registros con valores atípicos y variables con datos
+irrelevantes. Estas imperfecciones en los datos mayormente se deben a
+omisiones de datos al llenar los campos de un formulario manual o
+electrónico, errores humanos en la captura y programas sin validaciones
+rigurosas de entrada que eviten su ingreso.
+
+El proceso de preparación de los datos inicia con una exploración visual
+de los datos que permite identificar algunos problemas que son evidentes
+y que se pueden solucionar, antes de que los procesos automatizados
+entren en acción. Por ejemplo, en una exploración visual de un conjunto
+de datos, es posible identificar si existen registros donde ninguno de
+los campos tenga datos, así mismo, podría advertirse de alguna variable
+donde todos los datos se encuentren almacenados en un formato no
+conveniente para hacer análisis. Las acciones a tomar en estos casos
+particulares, pueden ser: Eliminar los registros sin datos y hacer un
+proceso de transformación de formato a uno que convenga para el
+análisis. Una vez hecho esto, se sigue con un reporte de calidad de los
+datos \citep{Kelleher2015}. Este reporte permite tener una vista general
+de los datos que permite tomar decisiones inmediatas para iniciar el
+proceso de depuración de la información, hasta tener un conjunto de
+datos de calidad para el análisis.
+
+Vamos a ver un ejemplo que permita clarificar lo que hasta aquí se ha
+escrito. Se cuenta con un conjunto de datos de una tienda departamental
+con la que se pretende saber los factores que influyen para que el
+primer cliente que llega a la tienda compre algún producto. Las
+variables con las que se cuenta para este análisis son: id, edad,
+genero, ocupación, estado.civil, hora.entrada, tiempo.at, vis.por.mes,
+venta.
+
+\begin{longtable}[]{@{}lllll@{}}
+\caption{\label{tab:estructura-de-datos} Resumen técnico de la estructura de
+los datos}\tabularnewline
+\toprule
+\begin{minipage}[b]{0.06\columnwidth}\raggedright\strut
+Nombre\strut
+\end{minipage} & \begin{minipage}[b]{0.06\columnwidth}\raggedright\strut
+Tipo\strut
+\end{minipage} & \begin{minipage}[b]{0.06\columnwidth}\raggedright\strut
+Rol\strut
+\end{minipage} & \begin{minipage}[b]{0.42\columnwidth}\raggedright\strut
+Valores\strut
+\end{minipage} & \begin{minipage}[b]{0.27\columnwidth}\raggedright\strut
+Descripción\strut
+\end{minipage}\tabularnewline
+\midrule
+\endfirsthead
+\toprule
+\begin{minipage}[b]{0.06\columnwidth}\raggedright\strut
+Nombre\strut
+\end{minipage} & \begin{minipage}[b]{0.06\columnwidth}\raggedright\strut
+Tipo\strut
+\end{minipage} & \begin{minipage}[b]{0.06\columnwidth}\raggedright\strut
+Rol\strut
+\end{minipage} & \begin{minipage}[b]{0.42\columnwidth}\raggedright\strut
+Valores\strut
+\end{minipage} & \begin{minipage}[b]{0.27\columnwidth}\raggedright\strut
+Descripción\strut
+\end{minipage}\tabularnewline
+\midrule
+\endhead
+\begin{minipage}[t]{0.06\columnwidth}\raggedright\strut
+ID\strut
+\end{minipage} & \begin{minipage}[t]{0.06\columnwidth}\raggedright\strut
+continua\strut
+\end{minipage} & \begin{minipage}[t]{0.06\columnwidth}\raggedright\strut
+predictiva\strut
+\end{minipage} & \begin{minipage}[t]{0.42\columnwidth}\raggedright\strut
+CLI\{3\}{[}0-9{]}\strut
+\end{minipage} & \begin{minipage}[t]{0.27\columnwidth}\raggedright\strut
+Identificador del cliente\strut
+\end{minipage}\tabularnewline
+\begin{minipage}[t]{0.06\columnwidth}\raggedright\strut
+EDAD\strut
+\end{minipage} & \begin{minipage}[t]{0.06\columnwidth}\raggedright\strut
+continua\strut
+\end{minipage} & \begin{minipage}[t]{0.06\columnwidth}\raggedright\strut
+predictiva\strut
+\end{minipage} & \begin{minipage}[t]{0.42\columnwidth}\raggedright\strut
+\{*3\}{[}0-9{]}\strut
+\end{minipage} & \begin{minipage}[t]{0.27\columnwidth}\raggedright\strut
+Edad en años\strut
+\end{minipage}\tabularnewline
+\begin{minipage}[t]{0.06\columnwidth}\raggedright\strut
+GENERO\strut
+\end{minipage} & \begin{minipage}[t]{0.06\columnwidth}\raggedright\strut
+categórica\strut
+\end{minipage} & \begin{minipage}[t]{0.06\columnwidth}\raggedright\strut
+predictiva\strut
+\end{minipage} & \begin{minipage}[t]{0.42\columnwidth}\raggedright\strut
+Femenino\strut
+\end{minipage} & \begin{minipage}[t]{0.27\columnwidth}\raggedright\strut
+Masculino\strut
+\end{minipage}\tabularnewline
+\begin{minipage}[t]{0.06\columnwidth}\raggedright\strut
+OCUPACIÓN\strut
+\end{minipage} & \begin{minipage}[t]{0.06\columnwidth}\raggedright\strut
+categórica\strut
+\end{minipage} & \begin{minipage}[t]{0.06\columnwidth}\raggedright\strut
+predictiva\strut
+\end{minipage} & \begin{minipage}[t]{0.42\columnwidth}\raggedright\strut
+Empleado\strut
+\end{minipage} & \begin{minipage}[t]{0.27\columnwidth}\raggedright\strut
+estudiante\strut
+\end{minipage}\tabularnewline
+\begin{minipage}[t]{0.06\columnwidth}\raggedright\strut
+H.ENT\strut
+\end{minipage} & \begin{minipage}[t]{0.06\columnwidth}\raggedright\strut
+continua\strut
+\end{minipage} & \begin{minipage}[t]{0.06\columnwidth}\raggedright\strut
+predictiva\strut
+\end{minipage} & \begin{minipage}[t]{0.42\columnwidth}\raggedright\strut
+\{*2\}{[}0-9{]}.\{*2\}{[}0-9{]}\strut
+\end{minipage} & \begin{minipage}[t]{0.27\columnwidth}\raggedright\strut
+Hora del día a la que entró el primer cliente a la tienda\strut
+\end{minipage}\tabularnewline
+\begin{minipage}[t]{0.06\columnwidth}\raggedright\strut
+TI.AT\strut
+\end{minipage} & \begin{minipage}[t]{0.06\columnwidth}\raggedright\strut
+continua\strut
+\end{minipage} & \begin{minipage}[t]{0.06\columnwidth}\raggedright\strut
+predictiva\strut
+\end{minipage} & \begin{minipage}[t]{0.42\columnwidth}\raggedright\strut
+\{2\}{[}0-9{]}\strut
+\end{minipage} & \begin{minipage}[t]{0.27\columnwidth}\raggedright\strut
+Tiempo en minutos en el que se atendió al cliente\strut
+\end{minipage}\tabularnewline
+\begin{minipage}[t]{0.06\columnwidth}\raggedright\strut
+VIS.POR.MES\strut
+\end{minipage} & \begin{minipage}[t]{0.06\columnwidth}\raggedright\strut
+categórica\strut
+\end{minipage} & \begin{minipage}[t]{0.06\columnwidth}\raggedright\strut
+predictiva\strut
+\end{minipage} & \begin{minipage}[t]{0.42\columnwidth}\raggedright\strut
+Nunca\strut
+\end{minipage} & \begin{minipage}[t]{0.27\columnwidth}\raggedright\strut
+menos de una vez por semana\strut
+\end{minipage}\tabularnewline
+\begin{minipage}[t]{0.06\columnwidth}\raggedright\strut
+VENTA\strut
+\end{minipage} & \begin{minipage}[t]{0.06\columnwidth}\raggedright\strut
+categórica\strut
+\end{minipage} & \begin{minipage}[t]{0.06\columnwidth}\raggedright\strut
+Objetivo\strut
+\end{minipage} & \begin{minipage}[t]{0.42\columnwidth}\raggedright\strut
+Si\strut
+\end{minipage} & \begin{minipage}[t]{0.27\columnwidth}\raggedright\strut
+No\strut
+\end{minipage}\tabularnewline
+\bottomrule
+\end{longtable}
+
+La Tabla \ref{tab:estructura-de-datos} muestra el resumen técnico de las
+variables. Se puede observar que se tiene ocho variables, siete de ellas
+son variables predictivas y una es la variable dependiente o variable
+objetivo. La variable objetivo es la variable de más interés en este
+conjunto de datos puesto que es la variable que se desea predecir a
+partir de las otras variables. También se puede observar que la variable
+objetivo es de tipo categórica, llamada en muchas ocasiones dicotómica,
+puesto que sólo puede tomar una de dos posibles valores (SI \textbar{}
+NO). De las variables predictivas, cuatro son continuas y tres son
+categóricas, en cada una se especifica los posibles valores que la
+variable puede tomar. Por ejemplo, que la variable Hora.entrada puede
+tomar un valor con formato \{*2\}{[}0-9{]}.\{*2\}{[}0-9{]}, se lee
+\{*2\}=uno o dos números del cero al nueve {[}0-9{]}, seguido de un
+punto (.), seguido de uno o dos números más \{*2\} del cero al nueve
+{[}0-9{]}.
+
+Los datos originales como fueron capturados se muestran en la tabla
+\ref{tab:datos-crudos}. Al hacer una exploración rápida a la tabla, es
+posible observar algunas irregularidades que pueden ser corregidas de
+inmediato y otras que requieren de un proceso computacional más
+elaborado, debido a que manualmente tomaría mucho tiempo hacerlo
+(pensemos en que en este ejemplo son pocos datos, sin embargo, podría
+tenerse una base de datos con cientos o miles de registros). La primera
+irregularidad que se observa es que el registro del cliente CLI011 no
+cuenta con datos, lo cual es indicativo de que este registro puede
+eliminarse del conjunto de datos sin ningún problema, de hecho, es
+beneficioso eliminarlo. Otro factor importante a resaltar es la captura
+de los datos en H.ENT y TI.AT, en el caso de H.ENT, ningún dato está en
+el formato adecuado (\{2\}{[}0-9{]}.\{2\}{[}0-9{]}), mientras que en
+TI.AT algunos datos no están en el formato adecuado. Además, algunos
+registros cuentan con valores faltantes.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{dcrudos<-}\KeywordTok{read.csv}\NormalTok{(}\DataTypeTok{file=}\StringTok{"C:/Master/Libro-Pearson-CETYS/Datos-ejemplo-preproceso.csv"}\NormalTok{,}\DataTypeTok{header =} \NormalTok{T,}\DataTypeTok{sep =} \StringTok{","}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{knitr::}\KeywordTok{kable}\NormalTok{(}
+  \NormalTok{dcrudos, }\DataTypeTok{caption =} \StringTok{'Datos de los primeros clientes entrando a la tienda.'}\NormalTok{,}
+  \DataTypeTok{booktabs =} \OtherTok{TRUE}
+\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{table}
+
+\caption{\label{tab:datos-crudos}Datos de los primeros clientes entrando a la tienda.}
+\centering
+\begin{tabular}[t]{lrllllll}
+\toprule
+ID & EDAD & GENERO & OCUPACION & H.ENT & TI.AT & VIS.POR.MES & VENTA\\
+\midrule
+CLI001 & 25 & Femenino & Empleado & 10:30 & 15 & Una o dos veces por semana & SI\\
+CLI002 & 26 & Masculino & Empleado & 11:00 & 3 & Nunca & SI\\
+CLI003 & 22 & Masculino & Empleado & 11:00 & NA & Menos de una vez por semana & NO\\
+CLI004 & 41 & Masculino & Empleado & 10:30am & 15 & Una o dos veces por semana & NO\\
+CLI005 & 38 & Masculino & Empleado & NA & 10 & Nunca & SI\\
+\addlinespace
+CLI006 & NA & Masculino & Empleado & 12:00 AM & 15 & Una o dos veces por semana & NO\\
+CLI007 & 22 & Masculino & Empleado & 11:00 & 5 & Nunca & SI\\
+CLI008 & 40 & Femenino & Empleado & 11:30 & 23 min & Tres o más veces por semana & NO\\
+CLI009 & 34 & Masculino & Empleado & 10:00 & 12 & Una o dos veces por semana & NO\\
+CLI010 & 27 & Masculino & Empleado & 10:30 & 13 & Una o dos veces por semana & NO\\
+\addlinespace
+CLI011 & NA & NA & NA & NA & NA & NA & NO\\
+CLI012 & 52 & Femenino & Empleado & 11:00 PM & 15 & Menos de una vez por semana & SI\\
+CLI013 & 48 & Femenino & Empleado & 11:50 PM & 60 min & Tres o más veces por semana & NO\\
+CLI014 & 51 & Masculino & Empleado & 12:30 & 5 & Nunca & SI\\
+CLI015 & 26 & Femenino & Empleado & 10:00pm & 18 & Una o dos veces por semana & NO\\
+\addlinespace
+CLI016 & 48 & Masculino & Empleado & 12.3 & 2 & Nunca & SI\\
+CLI017 & 35 & Femenino & Empleado & 11:30 & 10 & Nunca & SI\\
+CLI018 & 41 & Femenino & Empleado & 9:30 & 15 & Una o dos veces por semana & SI\\
+CLI019 & 53 & Femenino & Empleado & 11:00 & NA & Menos de una vez por semana & NO\\
+CLI020 & 36 & Femenino & Empleado & NA & 10 & Nunca & SI\\
+CLI021 & 51 & Femenino & Empleado & 11:00 & 15 & Una o dos veces por semana & SI\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{#se leimina el registro número 11 que no tiene datos}
+\NormalTok{dprepro_1<-dcrudos[-}\DecValTok{11}\NormalTok{,]}
+\CommentTok{#se reconstruyen los indices del conjunto de datos}
+\KeywordTok{rownames}\NormalTok{(dprepro_1)<-}\DecValTok{1}\NormalTok{:}\KeywordTok{dim}\NormalTok{(dprepro_1)[}\DecValTok{1}\NormalTok{]}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{####se valida y transforman los datos de tiempo y edad###}
+
+\CommentTok{#se cargan las funciones que se utilizará}
+
+\KeywordTok{source}\NormalTok{(}\DataTypeTok{file=}\StringTok{"C:/Master/Libro-Pearson-CETYS/material-complementario/code/valida_edad.R"}\NormalTok{,}\DataTypeTok{encoding =} \StringTok{"UTF8"}\NormalTok{)}
+\KeywordTok{source}\NormalTok{(}\DataTypeTok{file=}\StringTok{"C:/Master/Libro-Pearson-CETYS/material-complementario/code/valida_tiempo.R"}\NormalTok{,}\DataTypeTok{encoding =} \StringTok{"UTF8"}\NormalTok{)}
+\KeywordTok{source}\NormalTok{(}\DataTypeTok{file=}\StringTok{"C:/Master/Libro-Pearson-CETYS/material-complementario/code/valida_minutos.R"}\NormalTok{,}\DataTypeTok{encoding =} \StringTok{"UTF8"}\NormalTok{)}
+\KeywordTok{source}\NormalTok{(}\DataTypeTok{file=}\StringTok{"C:/Master/Libro-Pearson-CETYS/material-complementario/code/corrige_tiempo.R"}\NormalTok{,}\DataTypeTok{encoding =} \StringTok{"UTF8"}\NormalTok{)}
+\KeywordTok{source}\NormalTok{(}\DataTypeTok{file=}\StringTok{"C:/Master/Libro-Pearson-CETYS/material-complementario/code/regeneraImputedDS.R"}\NormalTok{,}\DataTypeTok{encoding =} \StringTok{"UTF8"}\NormalTok{)}
+
+
+\NormalTok{dprepro_1$H.ENT<-}\KeywordTok{sapply}\NormalTok{(dprepro_1$H.ENT,valida_tiempo)}
+\NormalTok{dprepro_1$EDAD<-}\KeywordTok{sapply}\NormalTok{(dprepro_1$EDAD,valida_edad)}
+\NormalTok{dprepro_1$TI.AT<-}\KeywordTok{sapply}\NormalTok{(dprepro_1$TI.AT,valida_minutos)}
+\NormalTok{dprepro_1$EDAD<-}\KeywordTok{as.numeric}\NormalTok{(dprepro_1$EDAD)}
+\NormalTok{dprepro_1$TI.AT<-}\KeywordTok{as.numeric}\NormalTok{(dprepro_1$TI.AT)}
+\end{Highlighting}
+\end{Shaded}
+
+Después de estos cambios el conjunto de datos luce de la siguiente forma
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{knitr::}\KeywordTok{kable}\NormalTok{(}
+  \NormalTok{dprepro_1, }\DataTypeTok{caption =} \StringTok{'Datos después de la validación y transformación'}\NormalTok{,}
+  \DataTypeTok{booktabs =} \OtherTok{TRUE}
+\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{table}
+
+\caption{\label{tab:datos-despues-valitrans}Datos después de la validación y transformación}
+\centering
+\begin{tabular}[t]{lrllrrll}
+\toprule
+ID & EDAD & GENERO & OCUPACION & H.ENT & TI.AT & VIS.POR.MES & VENTA\\
+\midrule
+CLI001 & 25 & Femenino & Empleado & 10.50 & 15 & Una o dos veces por semana & SI\\
+CLI002 & 26 & Masculino & Empleado & 11.00 & 3 & Nunca & SI\\
+CLI003 & 22 & Masculino & Empleado & 11.00 & NA & Menos de una vez por semana & NO\\
+CLI004 & 41 & Masculino & Empleado & 10.50 & 15 & Una o dos veces por semana & NO\\
+CLI005 & 38 & Masculino & Empleado & NA & 10 & Nunca & SI\\
+\addlinespace
+CLI006 & NA & Masculino & Empleado & 12.00 & 15 & Una o dos veces por semana & NO\\
+CLI007 & 22 & Masculino & Empleado & 11.00 & 5 & Nunca & SI\\
+CLI008 & 40 & Femenino & Empleado & 11.50 & 23 & Tres o más veces por semana & NO\\
+CLI009 & 34 & Masculino & Empleado & 10.00 & 12 & Una o dos veces por semana & NO\\
+CLI010 & 27 & Masculino & Empleado & 10.50 & 13 & Una o dos veces por semana & NO\\
+\addlinespace
+CLI012 & 52 & Femenino & Empleado & 11.00 & 15 & Menos de una vez por semana & SI\\
+CLI013 & 48 & Femenino & Empleado & 11.83 & 60 & Tres o más veces por semana & NO\\
+CLI014 & 51 & Masculino & Empleado & 12.50 & 5 & Nunca & SI\\
+CLI015 & 26 & Femenino & Empleado & 10.00 & 18 & Una o dos veces por semana & NO\\
+CLI016 & 48 & Masculino & Empleado & 12.05 & 2 & Nunca & SI\\
+\addlinespace
+CLI017 & 35 & Femenino & Empleado & 11.50 & 10 & Nunca & SI\\
+CLI018 & 41 & Femenino & Empleado & 9.50 & 15 & Una o dos veces por semana & SI\\
+CLI019 & 53 & Femenino & Empleado & 11.00 & NA & Menos de una vez por semana & NO\\
+CLI020 & 36 & Femenino & Empleado & NA & 10 & Nunca & SI\\
+CLI021 & 51 & Femenino & Empleado & 11.00 & 15 & Una o dos veces por semana & SI\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Al hacer el reporte de calidad del conjunto de datos se podrán ver estas
+irregularidades y otras de las que no nos percatamos a simple vista. Es
+importante notar que en este ejemplo, se tienen pocos datos, sin embargo
+en un escenario real se tendrían tantos datos que las irregularidades
+advertidas de forma simple, podrían fácilmente pasarse por alto.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{VARCONT<-}\KeywordTok{QOfContinuousF}\NormalTok{(}\KeywordTok{cbind.data.frame}\NormalTok{(}\DataTypeTok{EDAD=}\NormalTok{dprepro_1$EDAD,}\DataTypeTok{H.ENT=}\NormalTok{dprepro_1$H.ENT,}\DataTypeTok{TI.AT=}\NormalTok{dprepro_1$TI.AT))}
+\NormalTok{VARCAT<-}\KeywordTok{QOfCategoricalF}\NormalTok{(}\KeywordTok{cbind.data.frame}\NormalTok{(}\DataTypeTok{ID=}\NormalTok{dprepro_1$ID,dprepro_1[,}\DecValTok{3}\NormalTok{:}\DecValTok{4}\NormalTok{],dprepro_1[,}\DecValTok{7}\NormalTok{:}\DecValTok{8}\NormalTok{]))}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{knitr::}\KeywordTok{kable}\NormalTok{(}
+  \NormalTok{VARCONT, }\DataTypeTok{caption =} \StringTok{'Reporte de calidad de datos: Variables continuas'}\NormalTok{,}
+  \DataTypeTok{booktabs =} \OtherTok{FALSE}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{table}
+
+\caption{\label{tab:reporte-de-calidad-varcont}Reporte de calidad de datos: Variables continuas}
+\centering
+\begin{tabular}[t]{l|r|r|r|r|r|r|r|r|r|r}
+\hline
+  & Count & Miss & Card & Min & Qrt1 & Median & Qrt3 & Max & Mean & Sdev\\
+\hline
+EDAD & 20 & 1 & 14 & 22.0 & 26.5 & 38 & 48.0 & 53.0 & 37.68 & 10.80\\
+\hline
+H.ENT & 20 & 2 & 9 & 9.5 & 10.5 & 11 & 11.5 & 12.5 & 11.02 & 0.79\\
+\hline
+TI.AT & 20 & 2 & 10 & 2.0 & 10.0 & 14 & 15.0 & 60.0 & 14.50 & 12.59\\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{#write.csv(file = "C:/Master/Libro-Pearson-CETYS/material-complementario/tables/repcontvar.csv",VARCONT)}
+\end{Highlighting}
+\end{Shaded}
+
+En la Tabla \ref{tab:reporte-de-calidad-varcont}, se pueden observar
+algunos detalles a considerar para hacer tratamiento de los datos antes
+de que estén listos para ser guardados en la base de conocimientos. La
+columna de datos faltantes muestra que existen cinco registros que no
+tiene valores en las variables continuas (1 en edad, 2 en hora de
+entrada y 2 en tiempo de atención). Se puede optar por eliminar los
+registros con datos faltantes o bien, utilizar una técnica de
+imputación\footnote{La imputación es un proceso que permite suplir los
+  datos faltantes con datos aproximados a los valores reales que se
+  calculan por métodos estadísticos y/o matemáticos a partir de los
+  existentes.}. También puede observarse que en el tiempo de atención
+existe una desviación estándar bastante amplia (15.18). Tomando en
+cuenta que la media es de 12.59, el valor mínimo 2 y el valor máximo 60,
+puede anticiparse la posibilidad de valores atípicos, es decir valores
+que son excepcionales y que muchas veces no conviene tomarlos en cuenta
+para los análisis predictivos porque ocurren con muy poca frecuencia en
+la realidad y pueden ocasionar que los modelos no se ajusten a los datos
+de forma debida. En resumen, se debe dar tratamiento a los datos
+faltantes y se debe buscar si existen valores atípicos para dejarlos
+fuera de la generación de los modelos\footnote{Cabe aclarar que estos
+  datos no se eliminan completamente de las bases de datos, es útil
+  reportarlos como existentes porque proveen información valiosa para
+  los analistas, sin embargo, si se dejan fuera de muchos procesos para
+  evitar sesgos o como se dijo anteriormente, para evitar modelos
+  predictivos menos eficientes.}.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{knitr::}\KeywordTok{kable}\NormalTok{(}
+  \NormalTok{VARCAT, }\DataTypeTok{caption =} \StringTok{'Reporte de calidad de datos: Variables continuas'}\NormalTok{,}
+  \DataTypeTok{booktabs =} \OtherTok{FALSE}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{table}
+
+\caption{\label{tab:reporte-de-calidad-varcat}Reporte de calidad de datos: Variables continuas}
+\centering
+\begin{tabular}[t]{l|r|r|r|l|r|l|l|r|l}
+\hline
+  & Count & Miss & Card & Mode & ModeFrec & ModePerc & Mode2 & Mode2Frec & Mode2Perc\\
+\hline
+ID & 20 & 0 & 20 & CLI001 & 1 & 5\% & CLI002 & 1 & 5\%\\
+\hline
+GENERO & 20 & 0 & 2 & Femenino & 10 & 50\% & Masculino & 10 & 50\%\\
+\hline
+OCUPACION & 20 & 0 & 1 & Empleado & 20 & 100\% & NA & NA & NA\%\\
+\hline
+VIS.POR.MES & 20 & 0 & 4 & Una o dos veces por semana & 8 & 40\% & Nunca & 7 & 35\%\\
+\hline
+VENTA & 20 & 0 & 2 & SI & 11 & 55\% & NO & 9 & 45\%\\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{#write.csv(file = "C:/Master/Libro-Pearson-CETYS/material-complementario/tables/repcatvar.csv",VARCAT)}
+\end{Highlighting}
+\end{Shaded}
+
+En el reporte de calidad de las variables categóricas mostrado en la
+Tabla \ref{tab:reporte-de-calidad-varcat}, no existen datos faltantes,
+sin embargo, la columna ``cardinalidad'', aporta información relevante
+que debe tomarse en consideración. En primer lugar, la variable ID tiene
+cardinalidad 20, significa que existen 20 ID distintos en 20 registros.
+La tienda fue visitada por 20 clientes distintos, de esta forma se evita
+pensar que algunos resultados de VENTA/NO VENTA se debe a un determinado
+cliente (BUEN COMPRADOR/MAL COMPRADOR), así que, esta columna podría
+eliminarse del conjunto de datos puesto que no aporta información
+relevante al análisis. Se tiene el caso contrario, la cardinalidad de la
+variable OCUPACIÓN, tiene cardinalidad uno, es decir todos los registros
+tienen el mismo valor en esta variable (``Empleado''). Esta columna
+también puede eliminarse debido a que la VENTA/NO VENTA en este caso no
+tiene que ver con la ocupación de las personas. Las demás variables se
+observan con buena calidad y serán utilizadas para el análisis.
+
+Con la examinación de los datos en las tablas
+\ref{tab:reporte-de-calidad-varcont} y
+\ref{tab:reporte-de-calidad-varcat}, se genera el plan para atender las
+irregularidades en la tabla \ref{tab:plan-de-atencion-irregularidades}
+
+\begin{longtable}[]{@{}lll@{}}
+\caption{\label{tab:plan-de-atencion-irregularidades} Plan para atención de
+irregularidades en los datos}\tabularnewline
+\toprule
+\begin{minipage}[b]{0.05\columnwidth}\raggedright\strut
+Variable\strut
+\end{minipage} & \begin{minipage}[b]{0.11\columnwidth}\raggedright\strut
+Irregularidad\strut
+\end{minipage} & \begin{minipage}[b]{0.75\columnwidth}\raggedright\strut
+Plan\strut
+\end{minipage}\tabularnewline
+\midrule
+\endfirsthead
+\toprule
+\begin{minipage}[b]{0.05\columnwidth}\raggedright\strut
+Variable\strut
+\end{minipage} & \begin{minipage}[b]{0.11\columnwidth}\raggedright\strut
+Irregularidad\strut
+\end{minipage} & \begin{minipage}[b]{0.75\columnwidth}\raggedright\strut
+Plan\strut
+\end{minipage}\tabularnewline
+\midrule
+\endhead
+\begin{minipage}[t]{0.05\columnwidth}\raggedright\strut
+EDAD, H.ENT, TI.AT\strut
+\end{minipage} & \begin{minipage}[t]{0.11\columnwidth}\raggedright\strut
+No todos los datos están en formato correcto\strut
+\end{minipage} & \begin{minipage}[t]{0.75\columnwidth}\raggedright\strut
+En el caso de la edad existen registros con la palabra ``años''
+agregada, en H.ENT los datos están separados por (:) en lugar de (.),
+estos datos serán convertidos al nuevo formato (por ejemplo, 11:30
+pasará a 11.5 en formato decimal). La variable TI.AT será validada y
+transformada según el formato especificado.\strut
+\end{minipage}\tabularnewline
+\begin{minipage}[t]{0.05\columnwidth}\raggedright\strut
+EDAD, H.ENT, TI.AT\strut
+\end{minipage} & \begin{minipage}[t]{0.11\columnwidth}\raggedright\strut
+Valores faltantes\strut
+\end{minipage} & \begin{minipage}[t]{0.75\columnwidth}\raggedright\strut
+Se utilizará un método de imputación para suplir los valores
+faltantes\strut
+\end{minipage}\tabularnewline
+\begin{minipage}[t]{0.05\columnwidth}\raggedright\strut
+TI.AT\strut
+\end{minipage} & \begin{minipage}[t]{0.11\columnwidth}\raggedright\strut
+Desviación estándar amplia\strut
+\end{minipage} & \begin{minipage}[t]{0.75\columnwidth}\raggedright\strut
+Se utilizará un método para identificar valores atípicos, en el caso de
+existir, los datos serán excluidos del análisis.\strut
+\end{minipage}\tabularnewline
+\begin{minipage}[t]{0.05\columnwidth}\raggedright\strut
+ID\strut
+\end{minipage} & \begin{minipage}[t]{0.11\columnwidth}\raggedright\strut
+Cardinalidad muy alta\strut
+\end{minipage} & \begin{minipage}[t]{0.75\columnwidth}\raggedright\strut
+La columna será excluida de los datos para el análisis, no aporta
+información relevante.\strut
+\end{minipage}\tabularnewline
+\begin{minipage}[t]{0.05\columnwidth}\raggedright\strut
+OCUPACION\strut
+\end{minipage} & \begin{minipage}[t]{0.11\columnwidth}\raggedright\strut
+Cardinalidad muy baja\strut
+\end{minipage} & \begin{minipage}[t]{0.75\columnwidth}\raggedright\strut
+La columna será excluida de los datos para el análisis, no aporta
+información relevante.\strut
+\end{minipage}\tabularnewline
+\bottomrule
+\end{longtable}
+
+El siguiente paso en la depuración de la base de datos es la
+identificación de valores atípicos que serán descartados del conjunto de
+datos que servirá para la obtención de conjeturas o la generación
+modelos que permitan hacer pronósticos para beneficio de la empresa.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{library}\NormalTok{(outliers)}
+\KeywordTok{library}\NormalTok{(magrittr)}
+
+\CommentTok{#se descartan los registros con valores faltantes en la variable TIEMPO.AT para el}
+\CommentTok{#analisis de los valores atípicos}
+\NormalTok{nasdp<-}\KeywordTok{which}\NormalTok{(}\KeywordTok{is.na}\NormalTok{(dprepro_1$TI.AT))}
+\NormalTok{dptemp<-dprepro_1[-nasdp,]}
+\KeywordTok{rownames}\NormalTok{(dptemp)<-}\DecValTok{1}\NormalTok{:}\KeywordTok{nrow}\NormalTok{(dptemp) }
+
+\NormalTok{ic<-}\FloatTok{0.997}
+\CommentTok{#hist(dprepro_1$TIEMPO.AT)}
+\NormalTok{outTAT<-}\KeywordTok{scores}\NormalTok{(dptemp$TI.AT,}\DataTypeTok{type =} \StringTok{"z"}\NormalTok{,}\DataTypeTok{prob =} \NormalTok{ic)%>%}\KeywordTok{which}\NormalTok{(.)}
+\NormalTok{outTAT<-}\KeywordTok{unique}\NormalTok{(outTAT)}
+
+\NormalTok{datipico<-dptemp[outTAT,]}
+
+\CommentTok{#elimina los registros donde hay valores atípicos}
+\NormalTok{dptemp<-dptemp[-outTAT,]}
+\CommentTok{#reestructura los índices del dataset}
+\KeywordTok{rownames}\NormalTok{(dptemp)<-}\DecValTok{1}\NormalTok{:}\KeywordTok{nrow}\NormalTok{(dptemp)}
+
+\CommentTok{#se restructuran los registros con valores faltantes en d_preproc1 descartando el registo con valor atípico}
+\NormalTok{dprepro_1<-}\KeywordTok{rbind.data.frame}\NormalTok{(dprepro_1[nasdp,],dptemp)}
+\KeywordTok{rownames}\NormalTok{(dprepro_1)<-}\DecValTok{1}\NormalTok{:}\KeywordTok{nrow}\NormalTok{(dprepro_1)}
+
+\NormalTok{dordered<-dprepro_1[}\KeywordTok{order}\NormalTok{(dprepro_1$ID),]}
+\end{Highlighting}
+\end{Shaded}
+
+Existe un registro con un dato atípico en la variable TIEMPO.AT (ver
+Tabla \ref{tab:dato-atipico}), este registro se encuentra por arriba de
+las tres desviaciones estándar, así que será excluido de los datos que
+serán considerados para análisis posteriores.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{knitr::}\KeywordTok{kable}\NormalTok{(datipico,}\DataTypeTok{caption =} \StringTok{'Dato atípico identificado'}\NormalTok{,}\DataTypeTok{booktabs =} \OtherTok{FALSE}\NormalTok{) }
+\end{Highlighting}
+\end{Shaded}
+
+\begin{table}
+
+\caption{\label{tab:dato-atipico}Dato atípico identificado}
+\centering
+\begin{tabular}[t]{l|l|r|l|l|r|r|l|l}
+\hline
+  & ID & EDAD & GENERO & OCUPACION & H.ENT & TI.AT & VIS.POR.MES & VENTA\\
+\hline
+11 & CLI013 & 48 & Femenino & Empleado & 11.83 & 60 & Tres o más veces por semana & NO\\
+\hline
+\end{tabular}
+\end{table}
+
+Como penúltimo paso, se inputarán los valores faltantes mediante
+regresión logítica multivariable proporcionada por el paquete
+\emph{mice} \citep{mice2011}.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{library}\NormalTok{(}\StringTok{"mice"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## 
+## Attaching package: 'mice'
+\end{verbatim}
+
+\begin{verbatim}
+## The following object is masked from 'package:RCurl':
+## 
+##     complete
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+  \CommentTok{#busca las columnas que tienen valores faltantes}
+  \NormalTok{colNA<-(}\KeywordTok{c}\NormalTok{(}\KeywordTok{which}\NormalTok{(}\KeywordTok{is.na}\NormalTok{(dordered)))%/%}\KeywordTok{dim}\NormalTok{(dordered)[}\DecValTok{1}\NormalTok{])+}\DecValTok{1}
+  
+  \CommentTok{#elimina los índices repetidos}
+  \NormalTok{colNA<-}\KeywordTok{unique}\NormalTok{(colNA)}
+  \CommentTok{#construye el dataset con las columnas que tienen datos faltantes para hacer la imputacion}
+  \NormalTok{qs_dataforimp<-dordered[,colNA]}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+  \CommentTok{#imputa los datos con el dataset #dos en este caso elegido arbitrariamente  }
+  \NormalTok{completeSH<-}\KeywordTok{complete}\NormalTok{(imputedSH,}\DecValTok{2}\NormalTok{)}
+  
+  \NormalTok{dpreproc1_imputed<-}\KeywordTok{regeneraImputedDS}\NormalTok{(dordered,completeSH,colNA,}\KeywordTok{colnames}\NormalTok{(dprepro_1))}
+\end{Highlighting}
+\end{Shaded}
+
+Las Tabla \ref{tab:faltantes-imputados}, muestra dos tablas con las
+columnas que tiene los datos faltantes y las columnas que tienen los
+datos imputados.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{variablesconNa<-dprepro_1[,}\KeywordTok{c}\NormalTok{(}\DecValTok{2}\NormalTok{,}\DecValTok{5}\NormalTok{,}\DecValTok{6}\NormalTok{)]}
+\NormalTok{conNA<-variablesconNa[}\KeywordTok{order}\NormalTok{(}\KeywordTok{rownames}\NormalTok{(variablesconNa)),]}
+\NormalTok{sinNA<-completeSH[}\KeywordTok{order}\NormalTok{(}\KeywordTok{rownames}\NormalTok{(completeSH)),]}
+
+\NormalTok{knitr::}\KeywordTok{kable}\NormalTok{(}
+  \KeywordTok{list}\NormalTok{(}
+    \NormalTok{conNA,sinNA}
+  \NormalTok{),}
+  \DataTypeTok{caption =} \StringTok{'Variables con datos faltantes y sus respectivas imputaciones'}\NormalTok{,}\DataTypeTok{booktabs=}\OtherTok{TRUE}
+\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{table}
+\caption{\label{tab:faltantes-imputados}Variables con datos faltantes y sus respectivas imputaciones}
+
+\centering
+\begin{tabular}[t]{lrrr}
+\toprule
+  & EDAD & H.ENT & TI.AT\\
+\midrule
+1 & 22 & 11.00 & NA\\
+10 & 34 & 10.00 & 12\\
+11 & 27 & 10.50 & 13\\
+12 & 52 & 11.00 & 15\\
+13 & 51 & 12.50 & 5\\
+\addlinespace
+14 & 26 & 10.00 & 18\\
+15 & 48 & 12.05 & 2\\
+16 & 35 & 11.50 & 10\\
+17 & 41 & 9.50 & 15\\
+18 & 36 & NA & 10\\
+\addlinespace
+19 & 51 & 11.00 & 15\\
+2 & 53 & 11.00 & NA\\
+3 & 25 & 10.50 & 15\\
+4 & 26 & 11.00 & 3\\
+5 & 41 & 10.50 & 15\\
+\addlinespace
+6 & 38 & NA & 10\\
+7 & NA & 12.00 & 15\\
+8 & 22 & 11.00 & 5\\
+9 & 40 & 11.50 & 23\\
+\bottomrule
+\end{tabular}
+\centering
+\begin{tabular}[t]{lrrr}
+\toprule
+  & EDAD & H.ENT & TI.AT\\
+\midrule
+1 & 22 & 11.00 & 2\\
+10 & 34 & 10.00 & 12\\
+11 & 27 & 10.50 & 13\\
+12 & 52 & 11.00 & 15\\
+13 & 51 & 12.50 & 5\\
+\addlinespace
+14 & 26 & 10.00 & 18\\
+15 & 48 & 12.05 & 2\\
+16 & 35 & 11.50 & 10\\
+17 & 41 & 9.50 & 15\\
+18 & 36 & 11.00 & 10\\
+\addlinespace
+19 & 51 & 11.00 & 15\\
+2 & 53 & 11.00 & 12\\
+3 & 25 & 10.50 & 15\\
+4 & 26 & 11.00 & 3\\
+5 & 41 & 10.50 & 15\\
+\addlinespace
+6 & 38 & 11.00 & 10\\
+7 & 40 & 12.00 & 15\\
+8 & 22 & 11.00 & 5\\
+9 & 40 & 11.50 & 23\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Como último paso, se eliminan las columnas con datos irrelevantes por su
+cardinalidad como se explicó anteriormente.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{dpreproc1_imputed<-dpreproc1_imputed[,-}\KeywordTok{c}\NormalTok{(}\DecValTok{1}\NormalTok{,}\DecValTok{4}\NormalTok{)]}
+\CommentTok{#write.csv(file = "C:/Master/Libro-Pearson-CETYS/material-complementario/tables/datos-listos.csv",dpreproc1_imputed)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{knitr::}\KeywordTok{kable}\NormalTok{(}
+  \NormalTok{dpreproc1_imputed,}
+  \DataTypeTok{caption =} \StringTok{'Conjunto de datos preparado para análisis'}\NormalTok{,}\DataTypeTok{booktabs=}\OtherTok{TRUE}
+\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{table}
+
+\caption{\label{tab:datos-listos}Conjunto de datos preparado para análisis}
+\centering
+\begin{tabular}[t]{lrlrrll}
+\toprule
+  & EDAD & GENERO & H.ENT & TI.AT & VIS.POR.MES & VENTA\\
+\midrule
+3 & 25 & Femenino & 10.50 & 15 & Una o dos veces por semana & SI\\
+4 & 26 & Masculino & 11.00 & 3 & Nunca & SI\\
+1 & 22 & Masculino & 11.00 & 2 & Menos de una vez por semana & NO\\
+5 & 41 & Masculino & 10.50 & 15 & Una o dos veces por semana & NO\\
+6 & 38 & Masculino & 11.00 & 10 & Nunca & SI\\
+\addlinespace
+7 & 40 & Masculino & 12.00 & 15 & Una o dos veces por semana & NO\\
+8 & 22 & Masculino & 11.00 & 5 & Nunca & SI\\
+9 & 40 & Femenino & 11.50 & 23 & Tres o más veces por semana & NO\\
+10 & 34 & Masculino & 10.00 & 12 & Una o dos veces por semana & NO\\
+11 & 27 & Masculino & 10.50 & 13 & Una o dos veces por semana & NO\\
+\addlinespace
+12 & 52 & Femenino & 11.00 & 15 & Menos de una vez por semana & SI\\
+13 & 51 & Masculino & 12.50 & 5 & Nunca & SI\\
+14 & 26 & Femenino & 10.00 & 18 & Una o dos veces por semana & NO\\
+15 & 48 & Masculino & 12.05 & 2 & Nunca & SI\\
+16 & 35 & Femenino & 11.50 & 10 & Nunca & SI\\
+\addlinespace
+17 & 41 & Femenino & 9.50 & 15 & Una o dos veces por semana & SI\\
+2 & 53 & Femenino & 11.00 & 12 & Menos de una vez por semana & NO\\
+18 & 36 & Femenino & 11.00 & 10 & Nunca & SI\\
+19 & 51 & Femenino & 11.00 & 15 & Una o dos veces por semana & SI\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+En el conjunto de datos de la Tabla \ref{tab:datos-listos}, se han
+excluido las variables ID y OCUPACION, se han sustituido los valores
+faltantes por nuevos valores haciendo uso del método de regresión
+logística multi-variable mediante el uso del software ``mice''
+\citep{R-mice}. Se eliminó un registro que contenía un dato atípico que
+se identificó fuera de tres desviaciones estándar de la media, mediante
+el software ``outliers'' \citep{R-outliers}. Los datos de las variables
+EDAD, H.ENT y TI.AT han sido validados y transformados a valores válidos
+para el proceso de análisis. El listado completo de paquetes que se han
+ocupado para realizar este ejercicio incluye: \citep[\citet{R-magrittr},
+\citet{R-RCurl}, \citet{R-bookdown} and \citet{R-rmarkdown}]{R-knitr}
+
+\bibliography{packages,book}
+
+
+\end{document}

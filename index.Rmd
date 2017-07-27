@@ -1,0 +1,27 @@
+--- 
+title: "Preparación de datos"
+author: "DAIH:Arturo Laflor"
+date: "`r Sys.Date()`"
+site: bookdown::bookdown_site
+output: bookdown::pdf_book
+documentclass: book
+bibliography: [book.bib, packages.bib]
+biblio-style: apalike
+link-citations: yes
+github-repo: rstudio/bookdown-demo
+description: "Preparación de datos para su análisis."
+---
+
+<!-- output: bookdown::pdf_book -->
+
+```{r eval=FALSE, include=FALSE}
+devtools::install_github("rstudio/bookdown")
+```
+
+
+```{r include=FALSE}
+# automatically create a bib database for R packages
+knitr::write_bib(c(
+  .packages(), 'bookdown', 'knitr', 'rmarkdown'
+), 'packages.bib')
+```

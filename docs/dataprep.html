@@ -1,0 +1,1529 @@
+<!DOCTYPE html>
+<html >
+
+<head>
+
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>Preparación de datos</title>
+  <meta content="text/html; charset=UTF-8" http-equiv="Content-Type">
+  <meta name="description" content="Preparación de datos para su análisis.">
+  <meta name="generator" content="bookdown 0.3 and GitBook 2.6.7">
+
+  <meta property="og:title" content="Preparación de datos" />
+  <meta property="og:type" content="book" />
+  
+  
+  <meta property="og:description" content="Preparación de datos para su análisis." />
+  <meta name="github-repo" content="rstudio/bookdown-demo" />
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Preparación de datos" />
+  
+  <meta name="twitter:description" content="Preparación de datos para su análisis." />
+  
+
+<meta name="author" content="DAIH:Arturo Laflor">
+
+
+<meta name="date" content="2017-04-20">
+
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  
+  
+
+<link rel="next" href="references.html">
+
+<script src="libs/jquery-2.2.3/jquery.min.js"></script>
+<link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
+
+
+
+
+
+
+
+
+
+<style type="text/css">
+div.sourceCode { overflow-x: auto; }
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code > span.dt { color: #902000; } /* DataType */
+code > span.dv { color: #40a070; } /* DecVal */
+code > span.bn { color: #40a070; } /* BaseN */
+code > span.fl { color: #40a070; } /* Float */
+code > span.ch { color: #4070a0; } /* Char */
+code > span.st { color: #4070a0; } /* String */
+code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code > span.ot { color: #007020; } /* Other */
+code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code > span.fu { color: #06287e; } /* Function */
+code > span.er { color: #ff0000; font-weight: bold; } /* Error */
+code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+code > span.cn { color: #880000; } /* Constant */
+code > span.sc { color: #4070a0; } /* SpecialChar */
+code > span.vs { color: #4070a0; } /* VerbatimString */
+code > span.ss { color: #bb6688; } /* SpecialString */
+code > span.im { } /* Import */
+code > span.va { color: #19177c; } /* Variable */
+code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code > span.op { color: #666666; } /* Operator */
+code > span.bu { } /* BuiltIn */
+code > span.ex { } /* Extension */
+code > span.pp { color: #bc7a00; } /* Preprocessor */
+code > span.at { color: #7d9029; } /* Attribute */
+code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+</style>
+
+<link rel="stylesheet" href="style.css" type="text/css" />
+</head>
+
+<body>
+
+
+  <div class="book without-animation with-summary font-size-2 font-family-1" data-basepath=".">
+
+    <div class="book-summary">
+      <nav role="navigation">
+
+<ul class="summary">
+<li><a href="./">Notes of feature selection</a></li>
+
+<li class="divider"></li>
+<li class="chapter" data-level="1" data-path="dataprep.html"><a href="dataprep.html"><i class="fa fa-check"></i><b>1</b> Data preparation</a></li>
+<li class="chapter" data-level="" data-path="references.html"><a href="references.html"><i class="fa fa-check"></i>References</a></li>
+<li class="divider"></li>
+<li><a href="https://github.com/rstudio/bookdown" target="blank">Published with bookdown</a></li>
+
+</ul>
+
+      </nav>
+    </div>
+
+    <div class="book-body">
+      <div class="body-inner">
+        <div class="book-header" role="navigation">
+          <h1>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">Preparación de datos</a>
+          </h1>
+        </div>
+
+        <div class="page-wrapper" tabindex="-1" role="main">
+          <div class="page-inner">
+
+            <section class="normal" id="section-">
+<div id="header">
+<h1 class="title">Preparación de datos</h1>
+<h4 class="author"><em>DAIH:Arturo Laflor</em></h4>
+<h4 class="date"><em>2017-04-20</em></h4>
+</div>
+<div id="dataprep" class="section level1">
+<h1><span class="header-section-number">Chapter 1</span> Data preparation</h1>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(ggplot2)
+<span class="kw">library</span>(bitops)
+<span class="kw">library</span>(RCurl)
+<span class="co">#funciones online</span>
+script &lt;-<span class="st"> </span><span class="kw">getURL</span>(<span class="st">&quot;https://raw.githubusercontent.com/arturo-laflor/util-R-codes/master/QOfCategoricalF.R&quot;</span>, <span class="dt">ssl.verifypeer =</span> <span class="ot">FALSE</span>)
+<span class="kw">eval</span>(<span class="kw">parse</span>(<span class="dt">text =</span> script),<span class="dt">envir=</span>.GlobalEnv)
+
+script &lt;-<span class="st"> </span><span class="kw">getURL</span>(<span class="st">&quot;https://raw.githubusercontent.com/arturo-laflor/util-R-codes/master/QOfContinuousF.R&quot;</span>, <span class="dt">ssl.verifypeer =</span> <span class="ot">FALSE</span>)
+<span class="kw">eval</span>(<span class="kw">parse</span>(<span class="dt">text =</span> script),<span class="dt">envir=</span>.GlobalEnv)
+
+script &lt;-<span class="st"> </span><span class="kw">getURL</span>(<span class="st">&quot;https://raw.githubusercontent.com/arturo-laflor/util-R-codes/master/multiplot.R&quot;</span>, <span class="dt">ssl.verifypeer =</span> <span class="ot">FALSE</span>)
+<span class="kw">eval</span>(<span class="kw">parse</span>(<span class="dt">text =</span> script),<span class="dt">envir=</span>.GlobalEnv)
+
+knitr::opts_chunk$<span class="kw">set</span>(<span class="dt">echo =</span> <span class="ot">TRUE</span>,<span class="dt">root.dir=</span><span class="st">&quot;C:/Master/Libro-Pearson-CETYS/&quot;</span>,<span class="dt">fig.pos =</span> <span class="st">&#39;H&#39;</span>)</code></pre></div>
+<p>Hasta aquí ya sabes que los datos son de suma importancia para tomar decisiones que pueden hacer crecer tu capacidad de ingresos en un negocio. Cómo ya se te mencionó, dichos datos normalmente se encontrarán almacenados en el disco duro de alguna computadora destinada para este fin (cuando las empresas son grandes, a las computadoras que almacenan los datos se conocen como “servidores de base de datos”). Sin embargo, antes de que los datos estén almacenados y listos para ser utilizados en el análisis que permitirá extraer información útil para el negocio, los datos normalmente deben recibir cierto tratamiento. Este proceso se denomina “preparación de datos” porque verifica que los datos con los que se realizarán los análisis para la toma de decisiones estén “libres” de imperfecciones hasta donde sea posible. De esta manera, se puede decir que los datos “se preparan” previamente para el análisis, de tal forma que los algoritmos (programas de computadora especializado en tareas que generan información relevante), trabajen con datos cuya calidad les permita un desempeño óptimo. Las principales imperfecciones de los datos son: Registros con datos faltantes, registros con datos en formato incorrecto, registros con valores atípicos y variables con datos irrelevantes. Estas imperfecciones en los datos mayormente se deben a omisiones de datos al llenar los campos de un formulario manual o electrónico, errores humanos en la captura y programas sin validaciones rigurosas de entrada que eviten su ingreso.</p>
+<p>El proceso de preparación de los datos inicia con una exploración visual de los datos que permite identificar algunos problemas que son evidentes y que se pueden solucionar, antes de que los procesos automatizados entren en acción. Por ejemplo, en una exploración visual de un conjunto de datos, es posible identificar si existen registros donde ninguno de los campos tenga datos, así mismo, podría advertirse de alguna variable donde todos los datos se encuentren almacenados en un formato no conveniente para hacer análisis. Las acciones a tomar en estos casos particulares, pueden ser: Eliminar los registros sin datos y hacer un proceso de transformación de formato a uno que convenga para el análisis. Una vez hecho esto, se sigue con un reporte de calidad de los datos <span class="citation">(Kelleher, Namee, and D’Arcy <a href="#ref-Kelleher2015">2015</a>)</span>. Este reporte permite tener una vista general de los datos que permite tomar decisiones inmediatas para iniciar el proceso de depuración de la información, hasta tener un conjunto de datos de calidad para el análisis.</p>
+<p>Vamos a ver un ejemplo que permita clarificar lo que hasta aquí se ha escrito. Se cuenta con un conjunto de datos de una tienda departamental con la que se pretende saber los factores que influyen para que el primer cliente que llega a la tienda compre algún producto. Las variables con las que se cuenta para este análisis son: id, edad, genero, ocupación, estado.civil, hora.entrada, tiempo.at, vis.por.mes, venta.</p>
+<table>
+<caption><span id="tab:estructura-de-datos">Table 1.1: </span> Resumen técnico de la estructura de los datos</caption>
+<colgroup>
+<col width="7%" />
+<col width="6%" />
+<col width="6%" />
+<col width="48%" />
+<col width="30%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Nombre</th>
+<th>Tipo</th>
+<th>Rol</th>
+<th>Valores</th>
+<th>Descripción</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>ID</td>
+<td>continua</td>
+<td>predictiva</td>
+<td>CLI{3}[0-9]</td>
+<td>Identificador del cliente</td>
+</tr>
+<tr class="even">
+<td>EDAD</td>
+<td>continua</td>
+<td>predictiva</td>
+<td>{*3}[0-9]</td>
+<td>Edad en años</td>
+</tr>
+<tr class="odd">
+<td>GENERO</td>
+<td>categórica</td>
+<td>predictiva</td>
+<td>Femenino</td>
+<td>Masculino</td>
+</tr>
+<tr class="even">
+<td>OCUPACIÓN</td>
+<td>categórica</td>
+<td>predictiva</td>
+<td>Empleado</td>
+<td>estudiante</td>
+</tr>
+<tr class="odd">
+<td>H.ENT</td>
+<td>continua</td>
+<td>predictiva</td>
+<td>{*2}[0-9].{*2}[0-9]</td>
+<td>Hora del día a la que entró el primer cliente a la tienda</td>
+</tr>
+<tr class="even">
+<td>TI.AT</td>
+<td>continua</td>
+<td>predictiva</td>
+<td>{2}[0-9]</td>
+<td>Tiempo en minutos en el que se atendió al cliente</td>
+</tr>
+<tr class="odd">
+<td>VIS.POR.MES</td>
+<td>categórica</td>
+<td>predictiva</td>
+<td>Nunca</td>
+<td>menos de una vez por semana</td>
+</tr>
+<tr class="even">
+<td>VENTA</td>
+<td>categórica</td>
+<td>Objetivo</td>
+<td>Si</td>
+<td>No</td>
+</tr>
+</tbody>
+</table>
+<p>La Tabla <a href="dataprep.html#tab:estructura-de-datos">1.1</a> muestra el resumen técnico de las variables. Se puede observar que se tiene ocho variables, siete de ellas son variables predictivas y una es la variable dependiente o variable objetivo. La variable objetivo es la variable de más interés en este conjunto de datos puesto que es la variable que se desea predecir a partir de las otras variables. También se puede observar que la variable objetivo es de tipo categórica, llamada en muchas ocasiones dicotómica, puesto que sólo puede tomar una de dos posibles valores (SI | NO). De las variables predictivas, cuatro son continuas y tres son categóricas, en cada una se especifica los posibles valores que la variable puede tomar. Por ejemplo, que la variable Hora.entrada puede tomar un valor con formato {*2}[0-9].{*2}[0-9], se lee {*2}=uno o dos números del cero al nueve [0-9], seguido de un punto (.), seguido de uno o dos números más {*2} del cero al nueve [0-9].</p>
+<p>Los datos originales como fueron capturados se muestran en la tabla <a href="dataprep.html#tab:datos-crudos">1.2</a>. Al hacer una exploración rápida a la tabla, es posible observar algunas irregularidades que pueden ser corregidas de inmediato y otras que requieren de un proceso computacional más elaborado, debido a que manualmente tomaría mucho tiempo hacerlo (pensemos en que en este ejemplo son pocos datos, sin embargo, podría tenerse una base de datos con cientos o miles de registros). La primera irregularidad que se observa es que el registro del cliente CLI011 no cuenta con datos, lo cual es indicativo de que este registro puede eliminarse del conjunto de datos sin ningún problema, de hecho, es beneficioso eliminarlo. Otro factor importante a resaltar es la captura de los datos en H.ENT y TI.AT, en el caso de H.ENT, ningún dato está en el formato adecuado ({2}[0-9].{2}[0-9]), mientras que en TI.AT algunos datos no están en el formato adecuado. Además, algunos registros cuentan con valores faltantes.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">dcrudos&lt;-<span class="kw">read.csv</span>(<span class="dt">file=</span><span class="st">&quot;C:/Master/Libro-Pearson-CETYS/Datos-ejemplo-preproceso.csv&quot;</span>,<span class="dt">header =</span> T,<span class="dt">sep =</span> <span class="st">&quot;,&quot;</span>)</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">knitr::<span class="kw">kable</span>(
+  dcrudos, <span class="dt">caption =</span> <span class="st">&#39;Datos de los primeros clientes entrando a la tienda.&#39;</span>,
+  <span class="dt">booktabs =</span> <span class="ot">TRUE</span>
+)</code></pre></div>
+<table>
+<caption><span id="tab:datos-crudos">Table 1.2: </span>Datos de los primeros clientes entrando a la tienda.</caption>
+<thead>
+<tr class="header">
+<th align="left">ID</th>
+<th align="right">EDAD</th>
+<th align="left">GENERO</th>
+<th align="left">OCUPACION</th>
+<th align="left">H.ENT</th>
+<th align="left">TI.AT</th>
+<th align="left">VIS.POR.MES</th>
+<th align="left">VENTA</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">CLI001</td>
+<td align="right">25</td>
+<td align="left">Femenino</td>
+<td align="left">Empleado</td>
+<td align="left">10:30</td>
+<td align="left">15</td>
+<td align="left">Una o dos veces por semana</td>
+<td align="left">SI</td>
+</tr>
+<tr class="even">
+<td align="left">CLI002</td>
+<td align="right">26</td>
+<td align="left">Masculino</td>
+<td align="left">Empleado</td>
+<td align="left">11:00</td>
+<td align="left">3</td>
+<td align="left">Nunca</td>
+<td align="left">SI</td>
+</tr>
+<tr class="odd">
+<td align="left">CLI003</td>
+<td align="right">22</td>
+<td align="left">Masculino</td>
+<td align="left">Empleado</td>
+<td align="left">11:00</td>
+<td align="left">NA</td>
+<td align="left">Menos de una vez por semana</td>
+<td align="left">NO</td>
+</tr>
+<tr class="even">
+<td align="left">CLI004</td>
+<td align="right">41</td>
+<td align="left">Masculino</td>
+<td align="left">Empleado</td>
+<td align="left">10:30am</td>
+<td align="left">15</td>
+<td align="left">Una o dos veces por semana</td>
+<td align="left">NO</td>
+</tr>
+<tr class="odd">
+<td align="left">CLI005</td>
+<td align="right">38</td>
+<td align="left">Masculino</td>
+<td align="left">Empleado</td>
+<td align="left">NA</td>
+<td align="left">10</td>
+<td align="left">Nunca</td>
+<td align="left">SI</td>
+</tr>
+<tr class="even">
+<td align="left">CLI006</td>
+<td align="right">NA</td>
+<td align="left">Masculino</td>
+<td align="left">Empleado</td>
+<td align="left">12:00 AM</td>
+<td align="left">15</td>
+<td align="left">Una o dos veces por semana</td>
+<td align="left">NO</td>
+</tr>
+<tr class="odd">
+<td align="left">CLI007</td>
+<td align="right">22</td>
+<td align="left">Masculino</td>
+<td align="left">Empleado</td>
+<td align="left">11:00</td>
+<td align="left">5</td>
+<td align="left">Nunca</td>
+<td align="left">SI</td>
+</tr>
+<tr class="even">
+<td align="left">CLI008</td>
+<td align="right">40</td>
+<td align="left">Femenino</td>
+<td align="left">Empleado</td>
+<td align="left">11:30</td>
+<td align="left">23 min</td>
+<td align="left">Tres o más veces por semana</td>
+<td align="left">NO</td>
+</tr>
+<tr class="odd">
+<td align="left">CLI009</td>
+<td align="right">34</td>
+<td align="left">Masculino</td>
+<td align="left">Empleado</td>
+<td align="left">10:00</td>
+<td align="left">12</td>
+<td align="left">Una o dos veces por semana</td>
+<td align="left">NO</td>
+</tr>
+<tr class="even">
+<td align="left">CLI010</td>
+<td align="right">27</td>
+<td align="left">Masculino</td>
+<td align="left">Empleado</td>
+<td align="left">10:30</td>
+<td align="left">13</td>
+<td align="left">Una o dos veces por semana</td>
+<td align="left">NO</td>
+</tr>
+<tr class="odd">
+<td align="left">CLI011</td>
+<td align="right">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NO</td>
+</tr>
+<tr class="even">
+<td align="left">CLI012</td>
+<td align="right">52</td>
+<td align="left">Femenino</td>
+<td align="left">Empleado</td>
+<td align="left">11:00 PM</td>
+<td align="left">15</td>
+<td align="left">Menos de una vez por semana</td>
+<td align="left">SI</td>
+</tr>
+<tr class="odd">
+<td align="left">CLI013</td>
+<td align="right">48</td>
+<td align="left">Femenino</td>
+<td align="left">Empleado</td>
+<td align="left">11:50 PM</td>
+<td align="left">60 min</td>
+<td align="left">Tres o más veces por semana</td>
+<td align="left">NO</td>
+</tr>
+<tr class="even">
+<td align="left">CLI014</td>
+<td align="right">51</td>
+<td align="left">Masculino</td>
+<td align="left">Empleado</td>
+<td align="left">12:30</td>
+<td align="left">5</td>
+<td align="left">Nunca</td>
+<td align="left">SI</td>
+</tr>
+<tr class="odd">
+<td align="left">CLI015</td>
+<td align="right">26</td>
+<td align="left">Femenino</td>
+<td align="left">Empleado</td>
+<td align="left">10:00pm</td>
+<td align="left">18</td>
+<td align="left">Una o dos veces por semana</td>
+<td align="left">NO</td>
+</tr>
+<tr class="even">
+<td align="left">CLI016</td>
+<td align="right">48</td>
+<td align="left">Masculino</td>
+<td align="left">Empleado</td>
+<td align="left">12.3</td>
+<td align="left">2</td>
+<td align="left">Nunca</td>
+<td align="left">SI</td>
+</tr>
+<tr class="odd">
+<td align="left">CLI017</td>
+<td align="right">35</td>
+<td align="left">Femenino</td>
+<td align="left">Empleado</td>
+<td align="left">11:30</td>
+<td align="left">10</td>
+<td align="left">Nunca</td>
+<td align="left">SI</td>
+</tr>
+<tr class="even">
+<td align="left">CLI018</td>
+<td align="right">41</td>
+<td align="left">Femenino</td>
+<td align="left">Empleado</td>
+<td align="left">9:30</td>
+<td align="left">15</td>
+<td align="left">Una o dos veces por semana</td>
+<td align="left">SI</td>
+</tr>
+<tr class="odd">
+<td align="left">CLI019</td>
+<td align="right">53</td>
+<td align="left">Femenino</td>
+<td align="left">Empleado</td>
+<td align="left">11:00</td>
+<td align="left">NA</td>
+<td align="left">Menos de una vez por semana</td>
+<td align="left">NO</td>
+</tr>
+<tr class="even">
+<td align="left">CLI020</td>
+<td align="right">36</td>
+<td align="left">Femenino</td>
+<td align="left">Empleado</td>
+<td align="left">NA</td>
+<td align="left">10</td>
+<td align="left">Nunca</td>
+<td align="left">SI</td>
+</tr>
+<tr class="odd">
+<td align="left">CLI021</td>
+<td align="right">51</td>
+<td align="left">Femenino</td>
+<td align="left">Empleado</td>
+<td align="left">11:00</td>
+<td align="left">15</td>
+<td align="left">Una o dos veces por semana</td>
+<td align="left">SI</td>
+</tr>
+</tbody>
+</table>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co">#se leimina el registro número 11 que no tiene datos</span>
+dprepro_1&lt;-dcrudos[-<span class="dv">11</span>,]
+<span class="co">#se reconstruyen los indices del conjunto de datos</span>
+<span class="kw">rownames</span>(dprepro_1)&lt;-<span class="dv">1</span>:<span class="kw">dim</span>(dprepro_1)[<span class="dv">1</span>]</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">####se valida y transforman los datos de tiempo y edad###
+
+<span class="co">#se cargan las funciones que se utilizará</span>
+
+<span class="kw">source</span>(<span class="dt">file=</span><span class="st">&quot;C:/Master/Libro-Pearson-CETYS/material-complementario/code/valida_edad.R&quot;</span>,<span class="dt">encoding =</span> <span class="st">&quot;UTF8&quot;</span>)
+<span class="kw">source</span>(<span class="dt">file=</span><span class="st">&quot;C:/Master/Libro-Pearson-CETYS/material-complementario/code/valida_tiempo.R&quot;</span>,<span class="dt">encoding =</span> <span class="st">&quot;UTF8&quot;</span>)
+<span class="kw">source</span>(<span class="dt">file=</span><span class="st">&quot;C:/Master/Libro-Pearson-CETYS/material-complementario/code/valida_minutos.R&quot;</span>,<span class="dt">encoding =</span> <span class="st">&quot;UTF8&quot;</span>)
+<span class="kw">source</span>(<span class="dt">file=</span><span class="st">&quot;C:/Master/Libro-Pearson-CETYS/material-complementario/code/corrige_tiempo.R&quot;</span>,<span class="dt">encoding =</span> <span class="st">&quot;UTF8&quot;</span>)
+<span class="kw">source</span>(<span class="dt">file=</span><span class="st">&quot;C:/Master/Libro-Pearson-CETYS/material-complementario/code/regeneraImputedDS.R&quot;</span>,<span class="dt">encoding =</span> <span class="st">&quot;UTF8&quot;</span>)
+
+
+dprepro_1$H.ENT&lt;-<span class="kw">sapply</span>(dprepro_1$H.ENT,valida_tiempo)
+dprepro_1$EDAD&lt;-<span class="kw">sapply</span>(dprepro_1$EDAD,valida_edad)
+dprepro_1$TI.AT&lt;-<span class="kw">sapply</span>(dprepro_1$TI.AT,valida_minutos)
+dprepro_1$EDAD&lt;-<span class="kw">as.numeric</span>(dprepro_1$EDAD)
+dprepro_1$TI.AT&lt;-<span class="kw">as.numeric</span>(dprepro_1$TI.AT)</code></pre></div>
+<p>Después de estos cambios el conjunto de datos luce de la siguiente forma</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">knitr::<span class="kw">kable</span>(
+  dprepro_1, <span class="dt">caption =</span> <span class="st">&#39;Datos después de la validación y transformación&#39;</span>,
+  <span class="dt">booktabs =</span> <span class="ot">TRUE</span>
+)</code></pre></div>
+<table>
+<caption><span id="tab:datos-despues-valitrans">Table 1.3: </span>Datos después de la validación y transformación</caption>
+<thead>
+<tr class="header">
+<th align="left">ID</th>
+<th align="right">EDAD</th>
+<th align="left">GENERO</th>
+<th align="left">OCUPACION</th>
+<th align="right">H.ENT</th>
+<th align="right">TI.AT</th>
+<th align="left">VIS.POR.MES</th>
+<th align="left">VENTA</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">CLI001</td>
+<td align="right">25</td>
+<td align="left">Femenino</td>
+<td align="left">Empleado</td>
+<td align="right">10.50</td>
+<td align="right">15</td>
+<td align="left">Una o dos veces por semana</td>
+<td align="left">SI</td>
+</tr>
+<tr class="even">
+<td align="left">CLI002</td>
+<td align="right">26</td>
+<td align="left">Masculino</td>
+<td align="left">Empleado</td>
+<td align="right">11.00</td>
+<td align="right">3</td>
+<td align="left">Nunca</td>
+<td align="left">SI</td>
+</tr>
+<tr class="odd">
+<td align="left">CLI003</td>
+<td align="right">22</td>
+<td align="left">Masculino</td>
+<td align="left">Empleado</td>
+<td align="right">11.00</td>
+<td align="right">NA</td>
+<td align="left">Menos de una vez por semana</td>
+<td align="left">NO</td>
+</tr>
+<tr class="even">
+<td align="left">CLI004</td>
+<td align="right">41</td>
+<td align="left">Masculino</td>
+<td align="left">Empleado</td>
+<td align="right">10.50</td>
+<td align="right">15</td>
+<td align="left">Una o dos veces por semana</td>
+<td align="left">NO</td>
+</tr>
+<tr class="odd">
+<td align="left">CLI005</td>
+<td align="right">38</td>
+<td align="left">Masculino</td>
+<td align="left">Empleado</td>
+<td align="right">NA</td>
+<td align="right">10</td>
+<td align="left">Nunca</td>
+<td align="left">SI</td>
+</tr>
+<tr class="even">
+<td align="left">CLI006</td>
+<td align="right">NA</td>
+<td align="left">Masculino</td>
+<td align="left">Empleado</td>
+<td align="right">12.00</td>
+<td align="right">15</td>
+<td align="left">Una o dos veces por semana</td>
+<td align="left">NO</td>
+</tr>
+<tr class="odd">
+<td align="left">CLI007</td>
+<td align="right">22</td>
+<td align="left">Masculino</td>
+<td align="left">Empleado</td>
+<td align="right">11.00</td>
+<td align="right">5</td>
+<td align="left">Nunca</td>
+<td align="left">SI</td>
+</tr>
+<tr class="even">
+<td align="left">CLI008</td>
+<td align="right">40</td>
+<td align="left">Femenino</td>
+<td align="left">Empleado</td>
+<td align="right">11.50</td>
+<td align="right">23</td>
+<td align="left">Tres o más veces por semana</td>
+<td align="left">NO</td>
+</tr>
+<tr class="odd">
+<td align="left">CLI009</td>
+<td align="right">34</td>
+<td align="left">Masculino</td>
+<td align="left">Empleado</td>
+<td align="right">10.00</td>
+<td align="right">12</td>
+<td align="left">Una o dos veces por semana</td>
+<td align="left">NO</td>
+</tr>
+<tr class="even">
+<td align="left">CLI010</td>
+<td align="right">27</td>
+<td align="left">Masculino</td>
+<td align="left">Empleado</td>
+<td align="right">10.50</td>
+<td align="right">13</td>
+<td align="left">Una o dos veces por semana</td>
+<td align="left">NO</td>
+</tr>
+<tr class="odd">
+<td align="left">CLI012</td>
+<td align="right">52</td>
+<td align="left">Femenino</td>
+<td align="left">Empleado</td>
+<td align="right">11.00</td>
+<td align="right">15</td>
+<td align="left">Menos de una vez por semana</td>
+<td align="left">SI</td>
+</tr>
+<tr class="even">
+<td align="left">CLI013</td>
+<td align="right">48</td>
+<td align="left">Femenino</td>
+<td align="left">Empleado</td>
+<td align="right">11.83</td>
+<td align="right">60</td>
+<td align="left">Tres o más veces por semana</td>
+<td align="left">NO</td>
+</tr>
+<tr class="odd">
+<td align="left">CLI014</td>
+<td align="right">51</td>
+<td align="left">Masculino</td>
+<td align="left">Empleado</td>
+<td align="right">12.50</td>
+<td align="right">5</td>
+<td align="left">Nunca</td>
+<td align="left">SI</td>
+</tr>
+<tr class="even">
+<td align="left">CLI015</td>
+<td align="right">26</td>
+<td align="left">Femenino</td>
+<td align="left">Empleado</td>
+<td align="right">10.00</td>
+<td align="right">18</td>
+<td align="left">Una o dos veces por semana</td>
+<td align="left">NO</td>
+</tr>
+<tr class="odd">
+<td align="left">CLI016</td>
+<td align="right">48</td>
+<td align="left">Masculino</td>
+<td align="left">Empleado</td>
+<td align="right">12.05</td>
+<td align="right">2</td>
+<td align="left">Nunca</td>
+<td align="left">SI</td>
+</tr>
+<tr class="even">
+<td align="left">CLI017</td>
+<td align="right">35</td>
+<td align="left">Femenino</td>
+<td align="left">Empleado</td>
+<td align="right">11.50</td>
+<td align="right">10</td>
+<td align="left">Nunca</td>
+<td align="left">SI</td>
+</tr>
+<tr class="odd">
+<td align="left">CLI018</td>
+<td align="right">41</td>
+<td align="left">Femenino</td>
+<td align="left">Empleado</td>
+<td align="right">9.50</td>
+<td align="right">15</td>
+<td align="left">Una o dos veces por semana</td>
+<td align="left">SI</td>
+</tr>
+<tr class="even">
+<td align="left">CLI019</td>
+<td align="right">53</td>
+<td align="left">Femenino</td>
+<td align="left">Empleado</td>
+<td align="right">11.00</td>
+<td align="right">NA</td>
+<td align="left">Menos de una vez por semana</td>
+<td align="left">NO</td>
+</tr>
+<tr class="odd">
+<td align="left">CLI020</td>
+<td align="right">36</td>
+<td align="left">Femenino</td>
+<td align="left">Empleado</td>
+<td align="right">NA</td>
+<td align="right">10</td>
+<td align="left">Nunca</td>
+<td align="left">SI</td>
+</tr>
+<tr class="even">
+<td align="left">CLI021</td>
+<td align="right">51</td>
+<td align="left">Femenino</td>
+<td align="left">Empleado</td>
+<td align="right">11.00</td>
+<td align="right">15</td>
+<td align="left">Una o dos veces por semana</td>
+<td align="left">SI</td>
+</tr>
+</tbody>
+</table>
+<p>Al hacer el reporte de calidad del conjunto de datos se podrán ver estas irregularidades y otras de las que no nos percatamos a simple vista. Es importante notar que en este ejemplo, se tienen pocos datos, sin embargo en un escenario real se tendrían tantos datos que las irregularidades advertidas de forma simple, podrían fácilmente pasarse por alto.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">VARCONT&lt;-<span class="kw">QOfContinuousF</span>(<span class="kw">cbind.data.frame</span>(<span class="dt">EDAD=</span>dprepro_1$EDAD,<span class="dt">H.ENT=</span>dprepro_1$H.ENT,<span class="dt">TI.AT=</span>dprepro_1$TI.AT))
+VARCAT&lt;-<span class="kw">QOfCategoricalF</span>(<span class="kw">cbind.data.frame</span>(<span class="dt">ID=</span>dprepro_1$ID,dprepro_1[,<span class="dv">3</span>:<span class="dv">4</span>],dprepro_1[,<span class="dv">7</span>:<span class="dv">8</span>]))</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">knitr::<span class="kw">kable</span>(
+  VARCONT, <span class="dt">caption =</span> <span class="st">&#39;Reporte de calidad de datos: Variables continuas&#39;</span>,
+  <span class="dt">booktabs =</span> <span class="ot">FALSE</span>)</code></pre></div>
+<table>
+<caption><span id="tab:reporte-de-calidad-varcont">Table 1.4: </span>Reporte de calidad de datos: Variables continuas</caption>
+<thead>
+<tr class="header">
+<th></th>
+<th align="right">Count</th>
+<th align="right">Miss</th>
+<th align="right">Card</th>
+<th align="right">Min</th>
+<th align="right">Qrt1</th>
+<th align="right">Median</th>
+<th align="right">Qrt3</th>
+<th align="right">Max</th>
+<th align="right">Mean</th>
+<th align="right">Sdev</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>EDAD</td>
+<td align="right">20</td>
+<td align="right">1</td>
+<td align="right">14</td>
+<td align="right">22.0</td>
+<td align="right">26.5</td>
+<td align="right">38</td>
+<td align="right">48.0</td>
+<td align="right">53.0</td>
+<td align="right">37.68</td>
+<td align="right">10.80</td>
+</tr>
+<tr class="even">
+<td>H.ENT</td>
+<td align="right">20</td>
+<td align="right">2</td>
+<td align="right">9</td>
+<td align="right">9.5</td>
+<td align="right">10.5</td>
+<td align="right">11</td>
+<td align="right">11.5</td>
+<td align="right">12.5</td>
+<td align="right">11.02</td>
+<td align="right">0.79</td>
+</tr>
+<tr class="odd">
+<td>TI.AT</td>
+<td align="right">20</td>
+<td align="right">2</td>
+<td align="right">10</td>
+<td align="right">2.0</td>
+<td align="right">10.0</td>
+<td align="right">14</td>
+<td align="right">15.0</td>
+<td align="right">60.0</td>
+<td align="right">14.50</td>
+<td align="right">12.59</td>
+</tr>
+</tbody>
+</table>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co">#write.csv(file = &quot;C:/Master/Libro-Pearson-CETYS/material-complementario/tables/repcontvar.csv&quot;,VARCONT)</span></code></pre></div>
+<p>En la Tabla <a href="dataprep.html#tab:reporte-de-calidad-varcont">1.4</a>, se pueden observar algunos detalles a considerar para hacer tratamiento de los datos antes de que estén listos para ser guardados en la base de conocimientos. La columna de datos faltantes muestra que existen cinco registros que no tiene valores en las variables continuas (1 en edad, 2 en hora de entrada y 2 en tiempo de atención). Se puede optar por eliminar los registros con datos faltantes o bien, utilizar una técnica de imputación<a href="#fn1" class="footnoteRef" id="fnref1"><sup>1</sup></a>. También puede observarse que en el tiempo de atención existe una desviación estándar bastante amplia (15.18). Tomando en cuenta que la media es de 12.59, el valor mínimo 2 y el valor máximo 60, puede anticiparse la posibilidad de valores atípicos, es decir valores que son excepcionales y que muchas veces no conviene tomarlos en cuenta para los análisis predictivos porque ocurren con muy poca frecuencia en la realidad y pueden ocasionar que los modelos no se ajusten a los datos de forma debida. En resumen, se debe dar tratamiento a los datos faltantes y se debe buscar si existen valores atípicos para dejarlos fuera de la generación de los modelos<a href="#fn2" class="footnoteRef" id="fnref2"><sup>2</sup></a>.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">knitr::<span class="kw">kable</span>(
+  VARCAT, <span class="dt">caption =</span> <span class="st">&#39;Reporte de calidad de datos: Variables continuas&#39;</span>,
+  <span class="dt">booktabs =</span> <span class="ot">FALSE</span>)</code></pre></div>
+<table>
+<caption><span id="tab:reporte-de-calidad-varcat">Table 1.5: </span>Reporte de calidad de datos: Variables continuas</caption>
+<thead>
+<tr class="header">
+<th></th>
+<th align="right">Count</th>
+<th align="right">Miss</th>
+<th align="right">Card</th>
+<th align="left">Mode</th>
+<th align="right">ModeFrec</th>
+<th align="left">ModePerc</th>
+<th align="left">Mode2</th>
+<th align="right">Mode2Frec</th>
+<th align="left">Mode2Perc</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>ID</td>
+<td align="right">20</td>
+<td align="right">0</td>
+<td align="right">20</td>
+<td align="left">CLI001</td>
+<td align="right">1</td>
+<td align="left">5%</td>
+<td align="left">CLI002</td>
+<td align="right">1</td>
+<td align="left">5%</td>
+</tr>
+<tr class="even">
+<td>GENERO</td>
+<td align="right">20</td>
+<td align="right">0</td>
+<td align="right">2</td>
+<td align="left">Femenino</td>
+<td align="right">10</td>
+<td align="left">50%</td>
+<td align="left">Masculino</td>
+<td align="right">10</td>
+<td align="left">50%</td>
+</tr>
+<tr class="odd">
+<td>OCUPACION</td>
+<td align="right">20</td>
+<td align="right">0</td>
+<td align="right">1</td>
+<td align="left">Empleado</td>
+<td align="right">20</td>
+<td align="left">100%</td>
+<td align="left">NA</td>
+<td align="right">NA</td>
+<td align="left">NA%</td>
+</tr>
+<tr class="even">
+<td>VIS.POR.MES</td>
+<td align="right">20</td>
+<td align="right">0</td>
+<td align="right">4</td>
+<td align="left">Una o dos veces por semana</td>
+<td align="right">8</td>
+<td align="left">40%</td>
+<td align="left">Nunca</td>
+<td align="right">7</td>
+<td align="left">35%</td>
+</tr>
+<tr class="odd">
+<td>VENTA</td>
+<td align="right">20</td>
+<td align="right">0</td>
+<td align="right">2</td>
+<td align="left">SI</td>
+<td align="right">11</td>
+<td align="left">55%</td>
+<td align="left">NO</td>
+<td align="right">9</td>
+<td align="left">45%</td>
+</tr>
+</tbody>
+</table>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co">#write.csv(file = &quot;C:/Master/Libro-Pearson-CETYS/material-complementario/tables/repcatvar.csv&quot;,VARCAT)</span></code></pre></div>
+<p>En el reporte de calidad de las variables categóricas mostrado en la Tabla <a href="dataprep.html#tab:reporte-de-calidad-varcat">1.5</a>, no existen datos faltantes, sin embargo, la columna “cardinalidad”, aporta información relevante que debe tomarse en consideración. En primer lugar, la variable ID tiene cardinalidad 20, significa que existen 20 ID distintos en 20 registros. La tienda fue visitada por 20 clientes distintos, de esta forma se evita pensar que algunos resultados de VENTA/NO VENTA se debe a un determinado cliente (BUEN COMPRADOR/MAL COMPRADOR), así que, esta columna podría eliminarse del conjunto de datos puesto que no aporta información relevante al análisis. Se tiene el caso contrario, la cardinalidad de la variable OCUPACIÓN, tiene cardinalidad uno, es decir todos los registros tienen el mismo valor en esta variable (“Empleado”). Esta columna también puede eliminarse debido a que la VENTA/NO VENTA en este caso no tiene que ver con la ocupación de las personas. Las demás variables se observan con buena calidad y serán utilizadas para el análisis.</p>
+<p>Con la examinación de los datos en las tablas <a href="dataprep.html#tab:reporte-de-calidad-varcont">1.4</a> y <a href="dataprep.html#tab:reporte-de-calidad-varcat">1.5</a>, se genera el plan para atender las irregularidades en la tabla <a href="dataprep.html#tab:plan-de-atencion-irregularidades">1.6</a></p>
+<table>
+<caption><span id="tab:plan-de-atencion-irregularidades">Table 1.6: </span> Plan para atención de irregularidades en los datos</caption>
+<colgroup>
+<col width="5%" />
+<col width="12%" />
+<col width="82%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Variable</th>
+<th>Irregularidad</th>
+<th>Plan</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>EDAD, H.ENT, TI.AT</td>
+<td>No todos los datos están en formato correcto</td>
+<td>En el caso de la edad existen registros con la palabra “años” agregada, en H.ENT los datos están separados por (:) en lugar de (.), estos datos serán convertidos al nuevo formato (por ejemplo, 11:30 pasará a 11.5 en formato decimal). La variable TI.AT será validada y transformada según el formato especificado.</td>
+</tr>
+<tr class="even">
+<td>EDAD, H.ENT, TI.AT</td>
+<td>Valores faltantes</td>
+<td>Se utilizará un método de imputación para suplir los valores faltantes</td>
+</tr>
+<tr class="odd">
+<td>TI.AT</td>
+<td>Desviación estándar amplia</td>
+<td>Se utilizará un método para identificar valores atípicos, en el caso de existir, los datos serán excluidos del análisis.</td>
+</tr>
+<tr class="even">
+<td>ID</td>
+<td>Cardinalidad muy alta</td>
+<td>La columna será excluida de los datos para el análisis, no aporta información relevante.</td>
+</tr>
+<tr class="odd">
+<td>OCUPACION</td>
+<td>Cardinalidad muy baja</td>
+<td>La columna será excluida de los datos para el análisis, no aporta información relevante.</td>
+</tr>
+</tbody>
+</table>
+<p>El siguiente paso en la depuración de la base de datos es la identificación de valores atípicos que serán descartados del conjunto de datos que servirá para la obtención de conjeturas o la generación modelos que permitan hacer pronósticos para beneficio de la empresa.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(outliers)
+<span class="kw">library</span>(magrittr)
+
+<span class="co">#se descartan los registros con valores faltantes en la variable TIEMPO.AT para el</span>
+<span class="co">#analisis de los valores atípicos</span>
+nasdp&lt;-<span class="kw">which</span>(<span class="kw">is.na</span>(dprepro_1$TI.AT))
+dptemp&lt;-dprepro_1[-nasdp,]
+<span class="kw">rownames</span>(dptemp)&lt;-<span class="dv">1</span>:<span class="kw">nrow</span>(dptemp) 
+
+ic&lt;-<span class="fl">0.997</span>
+<span class="co">#hist(dprepro_1$TIEMPO.AT)</span>
+outTAT&lt;-<span class="kw">scores</span>(dptemp$TI.AT,<span class="dt">type =</span> <span class="st">&quot;z&quot;</span>,<span class="dt">prob =</span> ic)%&gt;%<span class="kw">which</span>(.)
+outTAT&lt;-<span class="kw">unique</span>(outTAT)
+
+datipico&lt;-dptemp[outTAT,]
+
+<span class="co">#elimina los registros donde hay valores atípicos</span>
+dptemp&lt;-dptemp[-outTAT,]
+<span class="co">#reestructura los índices del dataset</span>
+<span class="kw">rownames</span>(dptemp)&lt;-<span class="dv">1</span>:<span class="kw">nrow</span>(dptemp)
+
+<span class="co">#se restructuran los registros con valores faltantes en d_preproc1 descartando el registo con valor atípico</span>
+dprepro_1&lt;-<span class="kw">rbind.data.frame</span>(dprepro_1[nasdp,],dptemp)
+<span class="kw">rownames</span>(dprepro_1)&lt;-<span class="dv">1</span>:<span class="kw">nrow</span>(dprepro_1)
+
+dordered&lt;-dprepro_1[<span class="kw">order</span>(dprepro_1$ID),]</code></pre></div>
+<p>Existe un registro con un dato atípico en la variable TIEMPO.AT (ver Tabla <a href="dataprep.html#tab:dato-atipico">1.7</a>), este registro se encuentra por arriba de las tres desviaciones estándar, así que será excluido de los datos que serán considerados para análisis posteriores.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">knitr::<span class="kw">kable</span>(datipico,<span class="dt">caption =</span> <span class="st">&#39;Dato atípico identificado&#39;</span>,<span class="dt">booktabs =</span> <span class="ot">FALSE</span>) </code></pre></div>
+<table>
+<caption><span id="tab:dato-atipico">Table 1.7: </span>Dato atípico identificado</caption>
+<thead>
+<tr class="header">
+<th></th>
+<th align="left">ID</th>
+<th align="right">EDAD</th>
+<th align="left">GENERO</th>
+<th align="left">OCUPACION</th>
+<th align="right">H.ENT</th>
+<th align="right">TI.AT</th>
+<th align="left">VIS.POR.MES</th>
+<th align="left">VENTA</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>11</td>
+<td align="left">CLI013</td>
+<td align="right">48</td>
+<td align="left">Femenino</td>
+<td align="left">Empleado</td>
+<td align="right">11.83</td>
+<td align="right">60</td>
+<td align="left">Tres o más veces por semana</td>
+<td align="left">NO</td>
+</tr>
+</tbody>
+</table>
+<p>Como penúltimo paso, se inputarán los valores faltantes mediante regresión logítica multivariable proporcionada por el paquete <em>mice</em> <span class="citation">(van Buuren and Groothuis-Oudshoorn <a href="#ref-mice2011">2011</a>)</span>.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(<span class="st">&quot;mice&quot;</span>)
+  
+  <span class="co">#busca las columnas que tienen valores faltantes</span>
+  colNA&lt;-(<span class="kw">c</span>(<span class="kw">which</span>(<span class="kw">is.na</span>(dordered)))%/%<span class="kw">dim</span>(dordered)[<span class="dv">1</span>])+<span class="dv">1</span>
+  
+  <span class="co">#elimina los índices repetidos</span>
+  colNA&lt;-<span class="kw">unique</span>(colNA)
+  <span class="co">#construye el dataset con las columnas que tienen datos faltantes para hacer la imputacion</span>
+  qs_dataforimp&lt;-dordered[,colNA]</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">  <span class="co">#imputa los datos con el dataset #dos en este caso elegido arbitrariamente  </span>
+  completeSH&lt;-<span class="kw">complete</span>(imputedSH,<span class="dv">2</span>)
+  
+  dpreproc1_imputed&lt;-<span class="kw">regeneraImputedDS</span>(dordered,completeSH,colNA,<span class="kw">colnames</span>(dprepro_1))</code></pre></div>
+<p>Las Tabla <a href="dataprep.html#tab:faltantes-imputados">1.8</a>, muestra dos tablas con las columnas que tiene los datos faltantes y las columnas que tienen los datos imputados.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">variablesconNa&lt;-dprepro_1[,<span class="kw">c</span>(<span class="dv">2</span>,<span class="dv">5</span>,<span class="dv">6</span>)]
+conNA&lt;-variablesconNa[<span class="kw">order</span>(<span class="kw">rownames</span>(variablesconNa)),]
+sinNA&lt;-completeSH[<span class="kw">order</span>(<span class="kw">rownames</span>(completeSH)),]
+
+knitr::<span class="kw">kable</span>(
+  <span class="kw">list</span>(
+    conNA,sinNA
+  ),
+  <span class="dt">caption =</span> <span class="st">&#39;Variables con datos faltantes y sus respectivas imputaciones&#39;</span>,<span class="dt">booktabs=</span><span class="ot">TRUE</span>
+)</code></pre></div>
+<table class="kable_wrapper">
+<caption>
+<span id="tab:faltantes-imputados">Table 1.8: </span>Variables con datos faltantes y sus respectivas imputaciones
+</caption>
+<tbody>
+<tr>
+<td>
+<table>
+<thead>
+<tr class="header">
+<th></th>
+<th align="right">EDAD</th>
+<th align="right">H.ENT</th>
+<th align="right">TI.AT</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>1</td>
+<td align="right">22</td>
+<td align="right">11.00</td>
+<td align="right">NA</td>
+</tr>
+<tr class="even">
+<td>10</td>
+<td align="right">34</td>
+<td align="right">10.00</td>
+<td align="right">12</td>
+</tr>
+<tr class="odd">
+<td>11</td>
+<td align="right">27</td>
+<td align="right">10.50</td>
+<td align="right">13</td>
+</tr>
+<tr class="even">
+<td>12</td>
+<td align="right">52</td>
+<td align="right">11.00</td>
+<td align="right">15</td>
+</tr>
+<tr class="odd">
+<td>13</td>
+<td align="right">51</td>
+<td align="right">12.50</td>
+<td align="right">5</td>
+</tr>
+<tr class="even">
+<td>14</td>
+<td align="right">26</td>
+<td align="right">10.00</td>
+<td align="right">18</td>
+</tr>
+<tr class="odd">
+<td>15</td>
+<td align="right">48</td>
+<td align="right">12.05</td>
+<td align="right">2</td>
+</tr>
+<tr class="even">
+<td>16</td>
+<td align="right">35</td>
+<td align="right">11.50</td>
+<td align="right">10</td>
+</tr>
+<tr class="odd">
+<td>17</td>
+<td align="right">41</td>
+<td align="right">9.50</td>
+<td align="right">15</td>
+</tr>
+<tr class="even">
+<td>18</td>
+<td align="right">36</td>
+<td align="right">NA</td>
+<td align="right">10</td>
+</tr>
+<tr class="odd">
+<td>19</td>
+<td align="right">51</td>
+<td align="right">11.00</td>
+<td align="right">15</td>
+</tr>
+<tr class="even">
+<td>2</td>
+<td align="right">53</td>
+<td align="right">11.00</td>
+<td align="right">NA</td>
+</tr>
+<tr class="odd">
+<td>3</td>
+<td align="right">25</td>
+<td align="right">10.50</td>
+<td align="right">15</td>
+</tr>
+<tr class="even">
+<td>4</td>
+<td align="right">26</td>
+<td align="right">11.00</td>
+<td align="right">3</td>
+</tr>
+<tr class="odd">
+<td>5</td>
+<td align="right">41</td>
+<td align="right">10.50</td>
+<td align="right">15</td>
+</tr>
+<tr class="even">
+<td>6</td>
+<td align="right">38</td>
+<td align="right">NA</td>
+<td align="right">10</td>
+</tr>
+<tr class="odd">
+<td>7</td>
+<td align="right">NA</td>
+<td align="right">12.00</td>
+<td align="right">15</td>
+</tr>
+<tr class="even">
+<td>8</td>
+<td align="right">22</td>
+<td align="right">11.00</td>
+<td align="right">5</td>
+</tr>
+<tr class="odd">
+<td>9</td>
+<td align="right">40</td>
+<td align="right">11.50</td>
+<td align="right">23</td>
+</tr>
+</tbody>
+</table>
+</td>
+<td>
+<table>
+<thead>
+<tr class="header">
+<th></th>
+<th align="right">EDAD</th>
+<th align="right">H.ENT</th>
+<th align="right">TI.AT</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>1</td>
+<td align="right">22</td>
+<td align="right">11.00</td>
+<td align="right">2</td>
+</tr>
+<tr class="even">
+<td>10</td>
+<td align="right">34</td>
+<td align="right">10.00</td>
+<td align="right">12</td>
+</tr>
+<tr class="odd">
+<td>11</td>
+<td align="right">27</td>
+<td align="right">10.50</td>
+<td align="right">13</td>
+</tr>
+<tr class="even">
+<td>12</td>
+<td align="right">52</td>
+<td align="right">11.00</td>
+<td align="right">15</td>
+</tr>
+<tr class="odd">
+<td>13</td>
+<td align="right">51</td>
+<td align="right">12.50</td>
+<td align="right">5</td>
+</tr>
+<tr class="even">
+<td>14</td>
+<td align="right">26</td>
+<td align="right">10.00</td>
+<td align="right">18</td>
+</tr>
+<tr class="odd">
+<td>15</td>
+<td align="right">48</td>
+<td align="right">12.05</td>
+<td align="right">2</td>
+</tr>
+<tr class="even">
+<td>16</td>
+<td align="right">35</td>
+<td align="right">11.50</td>
+<td align="right">10</td>
+</tr>
+<tr class="odd">
+<td>17</td>
+<td align="right">41</td>
+<td align="right">9.50</td>
+<td align="right">15</td>
+</tr>
+<tr class="even">
+<td>18</td>
+<td align="right">36</td>
+<td align="right">11.00</td>
+<td align="right">10</td>
+</tr>
+<tr class="odd">
+<td>19</td>
+<td align="right">51</td>
+<td align="right">11.00</td>
+<td align="right">15</td>
+</tr>
+<tr class="even">
+<td>2</td>
+<td align="right">53</td>
+<td align="right">11.00</td>
+<td align="right">12</td>
+</tr>
+<tr class="odd">
+<td>3</td>
+<td align="right">25</td>
+<td align="right">10.50</td>
+<td align="right">15</td>
+</tr>
+<tr class="even">
+<td>4</td>
+<td align="right">26</td>
+<td align="right">11.00</td>
+<td align="right">3</td>
+</tr>
+<tr class="odd">
+<td>5</td>
+<td align="right">41</td>
+<td align="right">10.50</td>
+<td align="right">15</td>
+</tr>
+<tr class="even">
+<td>6</td>
+<td align="right">38</td>
+<td align="right">11.00</td>
+<td align="right">10</td>
+</tr>
+<tr class="odd">
+<td>7</td>
+<td align="right">40</td>
+<td align="right">12.00</td>
+<td align="right">15</td>
+</tr>
+<tr class="even">
+<td>8</td>
+<td align="right">22</td>
+<td align="right">11.00</td>
+<td align="right">5</td>
+</tr>
+<tr class="odd">
+<td>9</td>
+<td align="right">40</td>
+<td align="right">11.50</td>
+<td align="right">23</td>
+</tr>
+</tbody>
+</table>
+</td>
+</tr>
+</tbody>
+</table>
+<p>Como último paso, se eliminan las columnas con datos irrelevantes por su cardinalidad como se explicó anteriormente.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">dpreproc1_imputed&lt;-dpreproc1_imputed[,-<span class="kw">c</span>(<span class="dv">1</span>,<span class="dv">4</span>)]
+<span class="co">#write.csv(file = &quot;C:/Master/Libro-Pearson-CETYS/material-complementario/tables/datos-listos.csv&quot;,dpreproc1_imputed)</span></code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">knitr::<span class="kw">kable</span>(
+  dpreproc1_imputed,
+  <span class="dt">caption =</span> <span class="st">&#39;Conjunto de datos preparado para análisis&#39;</span>,<span class="dt">booktabs=</span><span class="ot">TRUE</span>
+)</code></pre></div>
+<table>
+<caption><span id="tab:datos-listos">Table 1.9: </span>Conjunto de datos preparado para análisis</caption>
+<thead>
+<tr class="header">
+<th></th>
+<th align="right">EDAD</th>
+<th align="left">GENERO</th>
+<th align="right">H.ENT</th>
+<th align="right">TI.AT</th>
+<th align="left">VIS.POR.MES</th>
+<th align="left">VENTA</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>3</td>
+<td align="right">25</td>
+<td align="left">Femenino</td>
+<td align="right">10.50</td>
+<td align="right">15</td>
+<td align="left">Una o dos veces por semana</td>
+<td align="left">SI</td>
+</tr>
+<tr class="even">
+<td>4</td>
+<td align="right">26</td>
+<td align="left">Masculino</td>
+<td align="right">11.00</td>
+<td align="right">3</td>
+<td align="left">Nunca</td>
+<td align="left">SI</td>
+</tr>
+<tr class="odd">
+<td>1</td>
+<td align="right">22</td>
+<td align="left">Masculino</td>
+<td align="right">11.00</td>
+<td align="right">2</td>
+<td align="left">Menos de una vez por semana</td>
+<td align="left">NO</td>
+</tr>
+<tr class="even">
+<td>5</td>
+<td align="right">41</td>
+<td align="left">Masculino</td>
+<td align="right">10.50</td>
+<td align="right">15</td>
+<td align="left">Una o dos veces por semana</td>
+<td align="left">NO</td>
+</tr>
+<tr class="odd">
+<td>6</td>
+<td align="right">38</td>
+<td align="left">Masculino</td>
+<td align="right">11.00</td>
+<td align="right">10</td>
+<td align="left">Nunca</td>
+<td align="left">SI</td>
+</tr>
+<tr class="even">
+<td>7</td>
+<td align="right">40</td>
+<td align="left">Masculino</td>
+<td align="right">12.00</td>
+<td align="right">15</td>
+<td align="left">Una o dos veces por semana</td>
+<td align="left">NO</td>
+</tr>
+<tr class="odd">
+<td>8</td>
+<td align="right">22</td>
+<td align="left">Masculino</td>
+<td align="right">11.00</td>
+<td align="right">5</td>
+<td align="left">Nunca</td>
+<td align="left">SI</td>
+</tr>
+<tr class="even">
+<td>9</td>
+<td align="right">40</td>
+<td align="left">Femenino</td>
+<td align="right">11.50</td>
+<td align="right">23</td>
+<td align="left">Tres o más veces por semana</td>
+<td align="left">NO</td>
+</tr>
+<tr class="odd">
+<td>10</td>
+<td align="right">34</td>
+<td align="left">Masculino</td>
+<td align="right">10.00</td>
+<td align="right">12</td>
+<td align="left">Una o dos veces por semana</td>
+<td align="left">NO</td>
+</tr>
+<tr class="even">
+<td>11</td>
+<td align="right">27</td>
+<td align="left">Masculino</td>
+<td align="right">10.50</td>
+<td align="right">13</td>
+<td align="left">Una o dos veces por semana</td>
+<td align="left">NO</td>
+</tr>
+<tr class="odd">
+<td>12</td>
+<td align="right">52</td>
+<td align="left">Femenino</td>
+<td align="right">11.00</td>
+<td align="right">15</td>
+<td align="left">Menos de una vez por semana</td>
+<td align="left">SI</td>
+</tr>
+<tr class="even">
+<td>13</td>
+<td align="right">51</td>
+<td align="left">Masculino</td>
+<td align="right">12.50</td>
+<td align="right">5</td>
+<td align="left">Nunca</td>
+<td align="left">SI</td>
+</tr>
+<tr class="odd">
+<td>14</td>
+<td align="right">26</td>
+<td align="left">Femenino</td>
+<td align="right">10.00</td>
+<td align="right">18</td>
+<td align="left">Una o dos veces por semana</td>
+<td align="left">NO</td>
+</tr>
+<tr class="even">
+<td>15</td>
+<td align="right">48</td>
+<td align="left">Masculino</td>
+<td align="right">12.05</td>
+<td align="right">2</td>
+<td align="left">Nunca</td>
+<td align="left">SI</td>
+</tr>
+<tr class="odd">
+<td>16</td>
+<td align="right">35</td>
+<td align="left">Femenino</td>
+<td align="right">11.50</td>
+<td align="right">10</td>
+<td align="left">Nunca</td>
+<td align="left">SI</td>
+</tr>
+<tr class="even">
+<td>17</td>
+<td align="right">41</td>
+<td align="left">Femenino</td>
+<td align="right">9.50</td>
+<td align="right">15</td>
+<td align="left">Una o dos veces por semana</td>
+<td align="left">SI</td>
+</tr>
+<tr class="odd">
+<td>2</td>
+<td align="right">53</td>
+<td align="left">Femenino</td>
+<td align="right">11.00</td>
+<td align="right">12</td>
+<td align="left">Menos de una vez por semana</td>
+<td align="left">NO</td>
+</tr>
+<tr class="even">
+<td>18</td>
+<td align="right">36</td>
+<td align="left">Femenino</td>
+<td align="right">11.00</td>
+<td align="right">10</td>
+<td align="left">Nunca</td>
+<td align="left">SI</td>
+</tr>
+<tr class="odd">
+<td>19</td>
+<td align="right">51</td>
+<td align="left">Femenino</td>
+<td align="right">11.00</td>
+<td align="right">15</td>
+<td align="left">Una o dos veces por semana</td>
+<td align="left">SI</td>
+</tr>
+</tbody>
+</table>
+<p>En el conjunto de datos de la Tabla <a href="dataprep.html#tab:datos-listos">1.9</a>, se han excluido las variables ID y OCUPACION, se han sustituido los valores faltantes por nuevos valores haciendo uso del método de regresión logística multi-variable mediante el uso del software “mice” <span class="citation">(van Buuren and Groothuis-Oudshoorn <a href="#ref-R-mice">2017</a>)</span>. Se eliminó un registro que contenía un dato atípico que se identificó fuera de tres desviaciones estándar de la media, mediante el software “outliers” <span class="citation">(Komsta <a href="#ref-R-outliers">2011</a>)</span>. Los datos de las variables EDAD, H.ENT y TI.AT han sido validados y transformados a valores válidos para el proceso de análisis. El listado completo de paquetes que se han ocupado para realizar este ejercicio incluye: <span class="citation">(Xie <a href="#ref-R-knitr">2016</a><a href="#ref-R-knitr">b</a>, <span class="citation">Bache and Wickham (<a href="#ref-R-magrittr">2014</a>)</span>, <span class="citation">Temple Lang and CRAN team (<a href="#ref-R-RCurl">2016</a>)</span>, <span class="citation">Xie (<a href="#ref-R-bookdown">2016</a><a href="#ref-R-bookdown">a</a>)</span> and <span class="citation">Allaire et al. (<a href="#ref-R-rmarkdown">2016</a>)</span>)</span></p>
+
+</div>
+<h3>References</h3>
+<div id="refs" class="references">
+<div id="ref-Kelleher2015">
+<p>Kelleher, John D., Brian Mac Namee, and Aoife D’Arcy. 2015. <em>Fundamentals of Machine Learning for Predictive Data Analytics: algorithms, worked examples, and case studies</em>. 1. London: The MIT Press.</p>
+</div>
+<div id="ref-mice2011">
+<p>van Buuren, Stef, and Karin Groothuis-Oudshoorn. 2011. “mice: Multivariate Imputation by Chained Equations in R.” <em>Journal of Statistical Software</em> 45 (3): 1–67. <a href="http://www.jstatsoft.org/v45/i03/" class="uri">http://www.jstatsoft.org/v45/i03/</a>.</p>
+</div>
+<div id="ref-R-mice">
+<p>van Buuren, Stef, and Karin Groothuis-Oudshoorn. 2017. <em>Mice: Multivariate Imputation by Chained Equations</em>. <a href="https://CRAN.R-project.org/package=mice" class="uri">https://CRAN.R-project.org/package=mice</a>.</p>
+</div>
+<div id="ref-R-outliers">
+<p>Komsta, Lukasz. 2011. <em>Outliers: Tests for Outliers</em>. <a href="https://CRAN.R-project.org/package=outliers" class="uri">https://CRAN.R-project.org/package=outliers</a>.</p>
+</div>
+<div id="ref-R-knitr">
+<p>Xie, Yihui. 2016b. <em>Knitr: A General-Purpose Package for Dynamic Report Generation in R</em>. <a href="https://CRAN.R-project.org/package=knitr" class="uri">https://CRAN.R-project.org/package=knitr</a>.</p>
+</div>
+<div id="ref-R-magrittr">
+<p>Bache, Stefan Milton, and Hadley Wickham. 2014. <em>Magrittr: A Forward-Pipe Operator for R</em>. <a href="https://CRAN.R-project.org/package=magrittr" class="uri">https://CRAN.R-project.org/package=magrittr</a>.</p>
+</div>
+<div id="ref-R-RCurl">
+<p>Temple Lang, Duncan, and the CRAN team. 2016. <em>RCurl: General Network (Http/Ftp/.) Client Interface for R</em>. <a href="https://CRAN.R-project.org/package=RCurl" class="uri">https://CRAN.R-project.org/package=RCurl</a>.</p>
+</div>
+<div id="ref-R-bookdown">
+<p>Xie, Yihui. 2016a. <em>Bookdown: Authoring Books and Technical Documents with R Markdown</em>. <a href="https://CRAN.R-project.org/package=bookdown" class="uri">https://CRAN.R-project.org/package=bookdown</a>.</p>
+</div>
+<div id="ref-R-rmarkdown">
+<p>Allaire, JJ, Joe Cheng, Yihui Xie, Jonathan McPherson, Winston Chang, Jeff Allen, Hadley Wickham, Aron Atkins, and Rob Hyndman. 2016. <em>Rmarkdown: Dynamic Documents for R</em>. <a href="https://CRAN.R-project.org/package=rmarkdown" class="uri">https://CRAN.R-project.org/package=rmarkdown</a>.</p>
+</div>
+</div>
+<div class="footnotes">
+<hr />
+<ol start="1">
+<li id="fn1"><p>La imputación es un proceso que permite suplir los datos faltantes con datos aproximados a los valores reales que se calculan por métodos estadísticos y/o matemáticos a partir de los existentes.<a href="dataprep.html#fnref1">↩</a></p></li>
+<li id="fn2"><p>Cabe aclarar que estos datos no se eliminan completamente de las bases de datos, es útil reportarlos como existentes porque proveen información valiosa para los analistas, sin embargo, si se dejan fuera de muchos procesos para evitar sesgos o como se dijo anteriormente, para evitar modelos predictivos menos eficientes.<a href="dataprep.html#fnref2">↩</a></p></li>
+</ol>
+</div>
+            </section>
+
+          </div>
+        </div>
+      </div>
+
+<a href="references.html" class="navigation navigation-next navigation-unique" aria-label="Next page""><i class="fa fa-angle-right"></i></a>
+
+<script src="libs/gitbook-2.6.7/js/app.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/lunr.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
+<script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
+<script>
+require(["gitbook"], function(gitbook) {
+gitbook.start({
+"sharing": {
+"github": false,
+"facebook": true,
+"twitter": true,
+"google": false,
+"weibo": false,
+"instapper": false,
+"vk": false,
+"all": ["facebook", "google", "twitter", "weibo", "instapaper"]
+},
+"fontsettings": {
+"theme": "white",
+"family": "sans",
+"size": 2
+},
+"edit": {
+"link": "https://github.com/rstudio/bookdown-demo/edit/master/01-data-preparation.Rmd",
+"text": "Edit"
+},
+"download": ["bookdown-demo.pdf", "bookdown-demo.epub"],
+"toc": {
+"collapse": "subsection"
+}
+});
+});
+</script>
+
+</body>
+
+</html>

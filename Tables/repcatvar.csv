@@ -1,0 +1,6 @@
+"","Count","Miss","Card","Mode","ModeFrec","ModePerc","Mode2","Mode2Frec","Mode2Perc"
+"ID",20,0,20,"CLI001",1,"5%","CLI002",1,"5%"
+"GENERO",20,0,2,"Femenino",10,"50%","Masculino",10,"50%"
+"OCUPACION",20,0,1,"Empleado",20,"100%",NA,NA,"NA%"
+"VIS.POR.MES",20,0,4,"Una o dos veces por semana",8,"40%","Nunca",7,"35%"
+"VENTA",20,0,2,"SI",11,"55%","NO",9,"45%"
