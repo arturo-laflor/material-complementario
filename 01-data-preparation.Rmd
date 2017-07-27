@@ -233,5 +233,5 @@ knitr::kable(
 )
 ```
 
-En el conjunto de datos de la Tabla \@ref(tab:datos-listos), se han excluido las variables ID y OCUPACION, se han sustituido los valores faltantes por nuevos valores haciendo uso del método de regresión logística multi-variable mediante el uso del software “mice” [@R-mice]. Se eliminó un registro que contenía un dato atípico que se identificó fuera de tres desviaciones estándar de la media, mediante el software “outliers” [@R-outliers]. Los datos de las variables EDAD, H.ENT y TI.AT han sido validados y transformados a valores válidos para el proceso de análisis.
+En el conjunto de datos de la Tabla \@ref(tab:datos-listos), se han excluido las variables ID y OCUPACION, se han sustituido los valores faltantes por nuevos valores haciendo uso del método de regresión logística multi-variable mediante el uso del software *mice* [@mice2011]. Se eliminó un registro que contenía un dato atípico que se identificó fuera de tres desviaciones estándar de la media, mediante el software “outliers” [@R-outliers]. Los datos de las variables EDAD, H.ENT y TI.AT han sido validados y transformados a valores válidos para el proceso de análisis.
 El listado completo de paquetes que se han ocupado para realizar este ejercicio incluye: [@R-knitr, @R-magrittr, @R-RCurl, @R-bookdown and @R-rmarkdown]
